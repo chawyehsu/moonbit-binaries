@@ -138,10 +138,9 @@ function Invoke-SnapBinaries {
     if ($Arch -eq 'win-x64') {
         Expand-Archive -Path $File -DestinationPath "$PSScriptRoot/tmp" -Force
     } else {
-        tar -xzf $File
+        tar -xf $File
+        chmod +x ./moonc
     }
-
-    ./moonc -v
 
     $VersionString = (& ./moonc -v)
     Pop-Location
@@ -149,7 +148,6 @@ function Invoke-SnapBinaries {
     if ($VersionString -match 'v([\d.]+)\+([a-f0-9]+)') {
         $LatestVersion = "$($Matches[1])+$($Matches[2])"
         $Sha256 = (Get-FileHash -Path $File -Algorithm SHA256).Hash.ToLower()
-
 
         $LatestRelease = @{
             "version" = $LatestVersion

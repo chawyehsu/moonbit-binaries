@@ -18,6 +18,7 @@ param(
 
 Set-StrictMode -Version Latest
 
+$DebugPreference = "Continue"
 $ErrorActionPreference = "Stop"
 
 $DistDir = "$PSScriptRoot/dist"
@@ -139,6 +140,9 @@ function Invoke-SnapBinaries {
     } else {
         tar -xzf $File
     }
+
+    ./moonc -v
+
     $VersionString = (& ./moonc -v)
     Pop-Location
 

@@ -25,4 +25,5 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: deployed
+          keep_files: true
           force_orphan: true

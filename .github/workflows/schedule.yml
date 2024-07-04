@@ -29,6 +29,7 @@ jobs:
           keep_files: true
 
   snap_toolchain:
+    needs: snap_core
     name: Snap Toolchain
     runs-on: ${{ matrix.os }}
     strategy:
@@ -36,8 +37,8 @@ jobs:
       matrix:
         include:
           - { os: ubuntu-latest }
-          # - { os: macos-latest }
-          # - { os: macos-13 }
+          - { os: macos-latest }
+          - { os: macos-13 }
           - { os: windows-latest }
 
     steps:

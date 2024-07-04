@@ -1,0 +1,452 @@
+{
+  "core": {
+    "last_modified": "20240724T0905210000Z",
+    "releases": [
+      {
+        "version": "0.1.20240724+44ca43a46",
+        "name": "moonbit-core-v0.1.20240724+44ca43a46.zip",
+        "sha256": "3cc8318d95278ca397f12a666012a29877d4ef5c90a7bed0c3fb8de221622c33"
+      },
+      {
+        "version": "0.1.20240723+eb42c7528",
+        "name": "moonbit-core-v0.1.20240723+eb42c7528.zip",
+        "sha256": "fea7cf4d4fee3ec2f44c1abb200a566f39a302696ae4a7368d6ac9bd0b0006e0"
+      },
+      {
+        "version": "0.1.20240723+bb7107754",
+        "name": "moonbit-core-v0.1.20240723+bb7107754.zip",
+        "sha256": "c811f5dbdc0b527fee15778fb67250a0bb8b6453e131198375514f93453bd9f3"
+      },
+      {
+        "version": "0.1.20240723+155a870f3",
+        "name": "moonbit-core-v0.1.20240723+155a870f3.zip",
+        "sha256": "e08199262d92e308b959d28adb034b1dbeabc14dccd328a5990eec75dd99900d"
+      },
+      {
+        "version": "0.1.20240722+695ec21e1",
+        "name": "moonbit-core-v0.1.20240722+695ec21e1.zip",
+        "sha256": "76840c49d8f4f9449f6a83f2462553ca034ecbd63cd6bdae44d185857a37b644"
+      },
+      {
+        "version": "0.1.20240719+7a0c5feac",
+        "name": "moonbit-core-v0.1.20240719+7a0c5feac.zip",
+        "sha256": "3d6c8493e3b9c8526383ea1c7df9461644f08ae520bbf41b0adb13d9c2f27980"
+      },
+      {
+        "version": "0.1.20240718+32d3b4fac",
+        "name": "moonbit-core-v0.1.20240718+32d3b4fac.zip",
+        "sha256": "e2dcbcfe60d4d2665dcc6987839547bba8dcc0e7cce0c9abc95bf697235ca413"
+      },
+      {
+        "version": "0.1.20240717+d22c317b1",
+        "name": "moonbit-core-v0.1.20240717+d22c317b1.zip",
+        "sha256": "57fc9e294005705156c281aa74f8e7c4c3c316ddcefa552e8196062e97b45670"
+      },
+      {
+        "version": "0.1.20240716+26483df10",
+        "name": "moonbit-core-v0.1.20240716+26483df10.zip",
+        "sha256": "2413e81a9ee88a46c66192aa01a8ef57554d2fe255ad84602ce4fb6c36c96a05"
+      },
+      {
+        "version": "0.1.20240715+7c82b4c13",
+        "name": "moonbit-core-v0.1.20240715+7c82b4c13.zip",
+        "sha256": "29b71a9cf58baee1c55f442b64e0386e52cdb0de916a2b765de11caebcc4b4c0"
+      },
+      {
+        "version": "0.1.20240712+c459ff08a",
+        "name": "moonbit-core-v0.1.20240712+c459ff08a.zip",
+        "sha256": "331ba453f1f274eb84940634c804ed563b32bccfaee4f8ae2f925acfbf9d7543"
+      },
+      {
+        "version": "0.1.20240711+5b8020f6e",
+        "name": "moonbit-core-v0.1.20240711+5b8020f6e.zip",
+        "sha256": "38994198dc20aa47f5043177ec6db90df4c86983528f624204a6c0a6ca3b840d"
+      },
+      {
+        "version": "0.1.20240710+4c588bfc1",
+        "name": "moonbit-core-v0.1.20240710+4c588bfc1.zip",
+        "sha256": "df79cdf597ca6d20afd501c73fe13fc8aa1a89041c464af1d68810fb56476d63"
+      },
+      {
+        "version": "0.1.20240709+b6909a8c7",
+        "name": "moonbit-core-v0.1.20240709+b6909a8c7.zip",
+        "sha256": "e73679f74e55c763df9afc4fdbb19b982c908d216d2453ebb3c0b00ee82a9948"
+      },
+      {
+        "version": "0.1.20240708+77f402149",
+        "name": "moonbit-core-v0.1.20240708+77f402149.zip",
+        "sha256": "41dad06e41e7526267a3d18b9922c5a603c3c78509ce9708d388ae2bdec654e8"
+      },
+      {
+        "version": "0.1.20240705+7fdd4a042",
+        "name": "moonbit-core-v0.1.20240705+7fdd4a042.zip",
+        "sha256": "a668521c8d43859a68d87a3bedf49517a6758715413171cd100dd89b63b5f627"
+      },
+      {
+        "version": "0.1.20240704+647946c28",
+        "name": "moonbit-core-v0.1.20240704+647946c28.zip",
+        "sha256": "6f7b81f0441fe15b1689730ab2ce2846f4616917edd2b371921ea393f9bc75a3"
+      }
+    ]
+  },
+  "darwin-arm64": {
+    "last_modified": "20240724T0902440000Z",
+    "releases": [
+      {
+        "version": "0.1.20240724+44ca43a46",
+        "name": "moonbit-v0.1.20240724+44ca43a46-darwin-arm64.tar.gz",
+        "sha256": "2387def71b83c697599b8a5196a2fef9269cea3501db44c598c2db8c56e65c08"
+      },
+      {
+        "version": "0.1.20240723+eb42c7528",
+        "name": "moonbit-v0.1.20240723+eb42c7528-darwin-arm64.tar.gz",
+        "sha256": "d53cdad11cd7844260e30fcfbcaef66dbc9787fc3a23b5b8dba5b55c92db77fd"
+      },
+      {
+        "version": "0.1.20240723+bb7107754",
+        "name": "moonbit-v0.1.20240723+bb7107754-darwin-arm64.tar.gz",
+        "sha256": "90b680534947a0436de726478578588a73687ed115a2e36e6df2e330a88c6a88"
+      },
+      {
+        "version": "0.1.20240723+155a870f3",
+        "name": "moonbit-v0.1.20240723+155a870f3-darwin-arm64.tar.gz",
+        "sha256": "c92489024d63dae46cd27bec629c3b9981d98669ba79baab745e091f8626c752"
+      },
+      {
+        "version": "0.1.20240722+695ec21e1",
+        "name": "moonbit-v0.1.20240722+695ec21e1-darwin-arm64.tar.gz",
+        "sha256": "f941c0c01003e37aab499fd76b1b494aaa67e7a891f19128621eb672b06b1bd2"
+      },
+      {
+        "version": "0.1.20240719+7a0c5feac",
+        "name": "moonbit-v0.1.20240719+7a0c5feac-darwin-arm64.tar.gz",
+        "sha256": "56827475a313cd920478ae86ad5bd152e7e0f78f18b5e888afdd8b8622571342"
+      },
+      {
+        "version": "0.1.20240718+32d3b4fac",
+        "name": "moonbit-v0.1.20240718+32d3b4fac-darwin-arm64.tar.gz",
+        "sha256": "5165cd2e8d4832028cbd4df7385dcfd1a889b62054d8ceaf47e0676419fa4b93"
+      },
+      {
+        "version": "0.1.20240717+d22c317b1",
+        "name": "moonbit-v0.1.20240717+d22c317b1-darwin-arm64.tar.gz",
+        "sha256": "7b5a6165565d89c373c02a3cec576effb6d6dca899259236b7087b89b9a6cc92"
+      },
+      {
+        "version": "0.1.20240716+26483df10",
+        "name": "moonbit-v0.1.20240716+26483df10-darwin-arm64.tar.gz",
+        "sha256": "231939e12213dc039460d50974d452facc545743bded81246dfddd8779a38335"
+      },
+      {
+        "version": "0.1.20240715+7c82b4c13",
+        "name": "moonbit-v0.1.20240715+7c82b4c13-darwin-arm64.tar.gz",
+        "sha256": "ae96a3f10567bc09cee0d6127c347dbc2e32cb3b8078789748f3c5878fed6742"
+      },
+      {
+        "version": "0.1.20240712+c459ff08a",
+        "name": "moonbit-v0.1.20240712+c459ff08a-darwin-arm64.tar.gz",
+        "sha256": "762f2f81880a581c71ab4a5fe7dc32d843811b9d20c5d4e795b6cbc549f5177c"
+      },
+      {
+        "version": "0.1.20240711+5b8020f6e",
+        "name": "moonbit-v0.1.20240711+5b8020f6e-darwin-arm64.tar.gz",
+        "sha256": "d07c660dfe225e40a35392c196e50fff930b4cebf4dba6aff5bafb04f631ab4e"
+      },
+      {
+        "version": "0.1.20240710+4c588bfc1",
+        "name": "moonbit-v0.1.20240710+4c588bfc1-darwin-arm64.tar.gz",
+        "sha256": "a43105086a5560b674745c920d66c544250902bcf1178474274a861778b9ad0f"
+      },
+      {
+        "version": "0.1.20240709+b6909a8c7",
+        "name": "moonbit-v0.1.20240709+b6909a8c7-darwin-arm64.tar.gz",
+        "sha256": "56714901c93e03c76c14e66fb14f326f7d870acda1785d769f9d105139d5411c"
+      },
+      {
+        "version": "0.1.20240708+77f402149",
+        "name": "moonbit-v0.1.20240708+77f402149-darwin-arm64.tar.gz",
+        "sha256": "e5261b0f9521af73d475806fcde009bc130d69d7ecfe064274cf085d5eac08c1"
+      },
+      {
+        "version": "0.1.20240705+7fdd4a042",
+        "name": "moonbit-v0.1.20240705+7fdd4a042-darwin-arm64.tar.gz",
+        "sha256": "5ce8d5a4d0e81762e45a235b1ade8c510e5d02fe996e6dcc25c7db925ea54b5f"
+      },
+      {
+        "version": "0.1.20240704+647946c28",
+        "name": "moonbit-v0.1.20240704+647946c28-darwin-arm64.tar.gz",
+        "sha256": "bc6a35d46df8b5df3addd2568c18e2d4a62b1db7fe82c65e83272940882a9d0d"
+      }
+    ]
+  },
+  "darwin-x64": {
+    "last_modified": "20240724T0902450000Z",
+    "releases": [
+      {
+        "version": "0.1.20240724+44ca43a46",
+        "name": "moonbit-v0.1.20240724+44ca43a46-darwin-x64.tar.gz",
+        "sha256": "a11f052454760840d37291cb410696ef7d3b7f2ea8f45a2556bdd3535439dd8f"
+      },
+      {
+        "version": "0.1.20240723+eb42c7528",
+        "name": "moonbit-v0.1.20240723+eb42c7528-darwin-x64.tar.gz",
+        "sha256": "10723818ff691a2bd216bf4bb9a0145a0e25e5e1682c52034a5689baa6082b88"
+      },
+      {
+        "version": "0.1.20240723+bb7107754",
+        "name": "moonbit-v0.1.20240723+bb7107754-darwin-x64.tar.gz",
+        "sha256": "79a3cc65158d0331cb7514bc059af4a7ecb5e6057b51f0ada6837923d37e07e2"
+      },
+      {
+        "version": "0.1.20240723+155a870f3",
+        "name": "moonbit-v0.1.20240723+155a870f3-darwin-x64.tar.gz",
+        "sha256": "b8439d66d597bbb71a645c3eaf89cf111638fc93735fc5c7d160dbc5fea1f5f1"
+      },
+      {
+        "version": "0.1.20240722+695ec21e1",
+        "name": "moonbit-v0.1.20240722+695ec21e1-darwin-x64.tar.gz",
+        "sha256": "2311a44949db92f5546e6e41716b75bbe1b4deec124b2495e5e4eb04a76418ed"
+      },
+      {
+        "version": "0.1.20240719+7a0c5feac",
+        "name": "moonbit-v0.1.20240719+7a0c5feac-darwin-x64.tar.gz",
+        "sha256": "cc916064646365659d8a8b23d09d550a00f1f43fa6bb8117af456d5b9818fa4c"
+      },
+      {
+        "version": "0.1.20240718+32d3b4fac",
+        "name": "moonbit-v0.1.20240718+32d3b4fac-darwin-x64.tar.gz",
+        "sha256": "780a4fff4c3722fff8b17f547f958a2d0611bc7d4c44eb21974df63622d9dc55"
+      },
+      {
+        "version": "0.1.20240717+d22c317b1",
+        "name": "moonbit-v0.1.20240717+d22c317b1-darwin-x64.tar.gz",
+        "sha256": "98b32d0c119e01ae104c87159605dbe14b83d6942ec596d943a65105041f3968"
+      },
+      {
+        "version": "0.1.20240716+26483df10",
+        "name": "moonbit-v0.1.20240716+26483df10-darwin-x64.tar.gz",
+        "sha256": "a760e17505891b7fe2f8f03216cd4e63e5a309cb7fd2332dc5e65ace1465de6d"
+      },
+      {
+        "version": "0.1.20240715+7c82b4c13",
+        "name": "moonbit-v0.1.20240715+7c82b4c13-darwin-x64.tar.gz",
+        "sha256": "d7b98bec63321ae5584364b4a495d805582afe7c9042874a5114627b760f1ece"
+      },
+      {
+        "version": "0.1.20240712+c459ff08a",
+        "name": "moonbit-v0.1.20240712+c459ff08a-darwin-x64.tar.gz",
+        "sha256": "0fcf629f49a53122d9159bce4cacccf04b47e34dd9a66dd54d3aff6f09bf82da"
+      },
+      {
+        "version": "0.1.20240711+5b8020f6e",
+        "name": "moonbit-v0.1.20240711+5b8020f6e-darwin-x64.tar.gz",
+        "sha256": "7a0c46726ec84cb46e1ae37a272f1027d974105a1b744aec8bad20829aa3d22a"
+      },
+      {
+        "version": "0.1.20240710+4c588bfc1",
+        "name": "moonbit-v0.1.20240710+4c588bfc1-darwin-x64.tar.gz",
+        "sha256": "69c206d65ba93dc8163b03e4ca4adfb4b50757900e7bc7586e77fd7a17a4cab9"
+      },
+      {
+        "version": "0.1.20240709+b6909a8c7",
+        "name": "moonbit-v0.1.20240709+b6909a8c7-darwin-x64.tar.gz",
+        "sha256": "94ecc8ebe7d4962329e58be89f5884003a2cff5b93d7c4c2a7a5c0e9764cb4c5"
+      },
+      {
+        "version": "0.1.20240708+77f402149",
+        "name": "moonbit-v0.1.20240708+77f402149-darwin-x64.tar.gz",
+        "sha256": "47b0c51ff33bc25ec4c91c1729459de1ff25b397243ccc362ec4f873a7639a5f"
+      },
+      {
+        "version": "0.1.20240705+7fdd4a042",
+        "name": "moonbit-v0.1.20240705+7fdd4a042-darwin-x64.tar.gz",
+        "sha256": "8e6e5f8b779837d7fa73d07f51a27651c6a214684301ec686ce850da050fafc3"
+      },
+      {
+        "version": "0.1.20240704+647946c28",
+        "name": "moonbit-v0.1.20240704+647946c28-darwin-x64.tar.gz",
+        "sha256": "9d4635f9bbcffbb01bd0c3fbaca585534ac2b61e98588d4644d834069bbebe4d"
+      }
+    ]
+  },
+  "linux-x64": {
+    "last_modified": "20240724T0902450000Z",
+    "releases": [
+      {
+        "version": "0.1.20240724+44ca43a46",
+        "name": "moonbit-v0.1.20240724+44ca43a46-linux-x64.tar.gz",
+        "sha256": "bd0e4787adcaaaa3e1ce0f757c2b8d750bcfed64cc6a21725b7e17b6dfde07bb"
+      },
+      {
+        "version": "0.1.20240723+eb42c7528",
+        "name": "moonbit-v0.1.20240723+eb42c7528-linux-x64.tar.gz",
+        "sha256": "9a375aa3709d985a2f0cf385684a5eee183b38de7e64a9f7ad25e5f36461ce19"
+      },
+      {
+        "version": "0.1.20240723+bb7107754",
+        "name": "moonbit-v0.1.20240723+bb7107754-linux-x64.tar.gz",
+        "sha256": "ab05e7b7b080efa03e2d3243b8da589a310dd256d310b40af8ca4a4fb4a28b0f"
+      },
+      {
+        "version": "0.1.20240723+155a870f3",
+        "name": "moonbit-v0.1.20240723+155a870f3-linux-x64.tar.gz",
+        "sha256": "1611ea4c002f06e4f6b80d8417cf40350dc954fe3c048c06dfae72b9f3c05887"
+      },
+      {
+        "version": "0.1.20240722+695ec21e1",
+        "name": "moonbit-v0.1.20240722+695ec21e1-linux-x64.tar.gz",
+        "sha256": "f4acd74b96a38ce671fd951234c9f444c66465d946f8ed138c31741294d3e2e7"
+      },
+      {
+        "version": "0.1.20240719+7a0c5feac",
+        "name": "moonbit-v0.1.20240719+7a0c5feac-linux-x64.tar.gz",
+        "sha256": "6873c3efd3aaa2cf5509989879dbc3861019149dc3d09cd2b650af7717bbca81"
+      },
+      {
+        "version": "0.1.20240718+32d3b4fac",
+        "name": "moonbit-v0.1.20240718+32d3b4fac-linux-x64.tar.gz",
+        "sha256": "1dc74f3a5276398153f22179f7c806bde8eb503b43da7fb26f543ceff27ba9ac"
+      },
+      {
+        "version": "0.1.20240717+d22c317b1",
+        "name": "moonbit-v0.1.20240717+d22c317b1-linux-x64.tar.gz",
+        "sha256": "166b5b6ed5a877e2611fddf4c1b24ef48de6ebdb45064f980ff2868572dce4ed"
+      },
+      {
+        "version": "0.1.20240716+26483df10",
+        "name": "moonbit-v0.1.20240716+26483df10-linux-x64.tar.gz",
+        "sha256": "e3bba375bd1347b989e45214bbaebde6ef7bc9c848d62330c4b99db30e9bf7e3"
+      },
+      {
+        "version": "0.1.20240715+7c82b4c13",
+        "name": "moonbit-v0.1.20240715+7c82b4c13-linux-x64.tar.gz",
+        "sha256": "2a2cce240459a7ce7bdfb51d28f8a9e09616509f4ff2a5356505ba606ef686d6"
+      },
+      {
+        "version": "0.1.20240712+c459ff08a",
+        "name": "moonbit-v0.1.20240712+c459ff08a-linux-x64.tar.gz",
+        "sha256": "bfbcb5ace0da2167872da2f1a8a317eeae23c9ab8c11b1288042a804de1ec3f2"
+      },
+      {
+        "version": "0.1.20240711+5b8020f6e",
+        "name": "moonbit-v0.1.20240711+5b8020f6e-linux-x64.tar.gz",
+        "sha256": "2353c96fdd5fc481ee6ca88e9d896d8a17501611e5a314e51cf8ab74386a15cb"
+      },
+      {
+        "version": "0.1.20240710+4c588bfc1",
+        "name": "moonbit-v0.1.20240710+4c588bfc1-linux-x64.tar.gz",
+        "sha256": "bb6c4c716bafd30927af42664fc83cf0eff963bee64fd44d2b3689a5cd66e88b"
+      },
+      {
+        "version": "0.1.20240709+b6909a8c7",
+        "name": "moonbit-v0.1.20240709+b6909a8c7-linux-x64.tar.gz",
+        "sha256": "3c26ca24c7bbb709d753ca762a046e12fef60737195b9a486a5e004410af5821"
+      },
+      {
+        "version": "0.1.20240708+77f402149",
+        "name": "moonbit-v0.1.20240708+77f402149-linux-x64.tar.gz",
+        "sha256": "77a52ec96da40d9843d3095e496f6f6af68b900ff6b8a12c8a015b3e9c468884"
+      },
+      {
+        "version": "0.1.20240705+7fdd4a042",
+        "name": "moonbit-v0.1.20240705+7fdd4a042-linux-x64.tar.gz",
+        "sha256": "941a3b440b965d306cc934cbdc2ffefe7b7380578d3f8a218c283568ceabbbf5"
+      },
+      {
+        "version": "0.1.20240704+647946c28",
+        "name": "moonbit-v0.1.20240704+647946c28-linux-x64.tar.gz",
+        "sha256": "74fb295ad9c1e8ad39404550fdd8f71975e0b6bb7c73614e9ac8170605f26d22"
+      }
+    ]
+  },
+  "win-x64": {
+    "last_modified": "20240724T0902450000Z",
+    "releases": [
+      {
+        "version": "0.1.20240724+44ca43a46",
+        "name": "moonbit-v0.1.20240724+44ca43a46-win-x64.zip",
+        "sha256": "08123dbd499fca27dd374173190e05b7746e820d7910faec9f827a039ea0eb21"
+      },
+      {
+        "version": "0.1.20240723+eb42c7528",
+        "name": "moonbit-v0.1.20240723+eb42c7528-win-x64.zip",
+        "sha256": "cb3d46f879218046e82082a8cb957119b2ebedbc454eb3d19a986cafdff2a804"
+      },
+      {
+        "version": "0.1.20240723+bb7107754",
+        "name": "moonbit-v0.1.20240723+bb7107754-win-x64.zip",
+        "sha256": "34da9ad7f25a420692452b476c41758ba0d4f2cbb14f6cbc46e4baae7d39b03d"
+      },
+      {
+        "version": "0.1.20240723+155a870f3",
+        "name": "moonbit-v0.1.20240723+155a870f3-win-x64.zip",
+        "sha256": "6bdecc8f8be755f297928d90b6f239924d993ac536562300aa14d017d989f023"
+      },
+      {
+        "version": "0.1.20240722+695ec21e1",
+        "name": "moonbit-v0.1.20240722+695ec21e1-win-x64.zip",
+        "sha256": "95cfb50694c33ac83253ba9d3ad8110b3314103c055f5dce415b9e6f7e0306ea"
+      },
+      {
+        "version": "0.1.20240719+7a0c5feac",
+        "name": "moonbit-v0.1.20240719+7a0c5feac-win-x64.zip",
+        "sha256": "7eaf3241f3525041b04fcae49e5239eb4b3df06028a000a5205b9fd681c41773"
+      },
+      {
+        "version": "0.1.20240718+32d3b4fac",
+        "name": "moonbit-v0.1.20240718+32d3b4fac-win-x64.zip",
+        "sha256": "436da2a0d6353d4514c2bbb30ff2a764991bf1e28059051b370edb377fc94b6b"
+      },
+      {
+        "version": "0.1.20240717+d22c317b1",
+        "name": "moonbit-v0.1.20240717+d22c317b1-win-x64.zip",
+        "sha256": "46f1564d06140deebd36d98b80934c266e130e9eed3e8222a7b89132dd83b493"
+      },
+      {
+        "version": "0.1.20240716+26483df10",
+        "name": "moonbit-v0.1.20240716+26483df10-win-x64.zip",
+        "sha256": "0d236a1d06a2b13e678193c6bbfdf033ac8925b95e4f17be4b1ed7f789c627fe"
+      },
+      {
+        "version": "0.1.20240715+7c82b4c13",
+        "name": "moonbit-v0.1.20240715+7c82b4c13-win-x64.zip",
+        "sha256": "033255abfe9739676fb7babe8165e4225c668a81c3aa498248cd794f3e5144cf"
+      },
+      {
+        "version": "0.1.20240712+c459ff08a",
+        "name": "moonbit-v0.1.20240712+c459ff08a-win-x64.zip",
+        "sha256": "ed51b6e7500a31b5e2eda202505818e2219dea23e7cb18d699175e23d2f55b60"
+      },
+      {
+        "version": "0.1.20240711+5b8020f6e",
+        "name": "moonbit-v0.1.20240711+5b8020f6e-win-x64.zip",
+        "sha256": "a07533e740305d5f6ffb13c071cfaeef6056a22418432917269d3507e9b57346"
+      },
+      {
+        "version": "0.1.20240710+4c588bfc1",
+        "name": "moonbit-v0.1.20240710+4c588bfc1-win-x64.zip",
+        "sha256": "80beecfb901ecd42a5d590f61dd8c9ee6642be4ef5a6ce8a3e0c1a4f0be74001"
+      },
+      {
+        "version": "0.1.20240709+b6909a8c7",
+        "name": "moonbit-v0.1.20240709+b6909a8c7-win-x64.zip",
+        "sha256": "abdd07d22ac54bc8b0616c015128fd66a50ce804864fbedfd91a6c9d80306fe2"
+      },
+      {
+        "version": "0.1.20240708+77f402149",
+        "name": "moonbit-v0.1.20240708+77f402149-win-x64.zip",
+        "sha256": "caeb9173481e9e08d0e69a231d18768a62e1b992b1d42644048356bc5dd95968"
+      },
+      {
+        "version": "0.1.20240705+7fdd4a042",
+        "name": "moonbit-v0.1.20240705+7fdd4a042-win-x64.zip",
+        "sha256": "ed5593d9b52ca6995b46559d6efb47dfdbda3d3684ac3f7243d21d02a9819c92"
+      },
+      {
+        "version": "0.1.20240704+647946c28",
+        "name": "moonbit-v0.1.20240704+647946c28-win-x64.zip",
+        "sha256": "694992192e181ed3af2207b7a57d9a12a85425d619f6c9d577e3ba29a22c896b"
+      }
+    ]
+  }
+}

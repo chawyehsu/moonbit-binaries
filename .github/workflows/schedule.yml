@@ -31,18 +31,79 @@ jobs:
           commit_message: deployed
           keep_files: true
 
-  snap_toolchain:
+  snap_toolchain_linux:
     needs: snap_core
-    name: Snap Toolchain
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { os: ubuntu-latest }
-          - { os: macos-latest }
-          - { os: macos-13 }
-          - { os: windows-latest }
+    name: Snap Toolchain Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Invoke Snap
+        shell: pwsh
+        run: ./snap.ps1 -SnapToolchain
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: deployed
+          keep_files: true
+
+  snap_toolchain_win:
+    needs: snap_toolchain_linux
+    name: Snap Toolchain Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Invoke Snap
+        shell: pwsh
+        run: ./snap.ps1 -SnapToolchain
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: deployed
+          keep_files: true
+
+  snap_toolchain_macos:
+    needs: snap_toolchain_win
+    name: Snap Toolchain macOS ARM
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Invoke Snap
+        shell: pwsh
+        run: ./snap.ps1 -SnapToolchain
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: deployed
+          keep_files: true
+
+  snap_toolchain_macos_x64:
+    needs: snap_toolchain_macos
+    name: Snap Toolchain macOS
+    runs-on: macos-13
 
     steps:
       - name: Checkout

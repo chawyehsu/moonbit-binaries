@@ -41,10 +41,10 @@ function Invoke-SnapCore {
     Write-Debug "Checking last modified date of moonbit core ..."
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $CoreEntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json
+    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not [bool]($Index | Get-Member -MemberType NoteProperty) -or ($Index.PSObject.Properties.Name -notcontains 'core')) {
-        $Index | Add-Member -MemberType NoteProperty -Name 'core' -Value @{
+        $Index.'core' = [ordered]@{
             "last_modified" = $null
             "releases" = @()
         }
@@ -74,13 +74,14 @@ function Invoke-SnapCore {
     $LatestVersion = $MoonModJson.version
     $Sha256 = (Get-FileHash -Path $File -Algorithm SHA256).Hash.ToLower()
 
-    $LatestRelease = @{
+    $LatestRelease = [ordered]@{
         "version" = $LatestVersion
         "name" = "moonbit-core-v$LatestVersion.zip"
         "sha256" = $Sha256
     }
 
-    $Index.'core'.releases += $LatestRelease
+    $Index.'core'.releases += ($LatestRelease)
+    $Index.'core'.releases = @($Index.'core'.releases | Sort-Object -Property version -Descending)
 
     Write-Debug "Updating index file ..."
     $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
@@ -105,10 +106,10 @@ function Invoke-SnapBinaries {
     Write-Debug "Checking last modified date of moonbit binaries ..."
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $EntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json
+    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not [bool]($Index | Get-Member -MemberType NoteProperty) -or ($Index.PSObject.Properties.Name -notcontains $Arch)) {
-        $Index | Add-Member -MemberType NoteProperty -Name $Arch -Value @{
+        $Index.$Arch = [ordered]@{
             "last_modified" = $null
             "releases" = @()
         }
@@ -154,13 +155,14 @@ function Invoke-SnapBinaries {
             $VersionedFilename = "moonbit-v$LatestVersion-$Arch.zip"
         }
 
-        $LatestRelease = @{
+        $LatestRelease = [ordered]@{
             "version" = $LatestVersion
             "name" = $VersionedFilename
             "sha256" = $Sha256
         }
 
-        $Index.$Arch.releases += $LatestRelease
+        $Index.$Arch.releases += ($LatestRelease)
+        $Index.$Arch.releases = @($Index.$Arch.releases | Sort-Object -Property version -Descending)
 
         Write-Debug "Updating index file ..."
         $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile

@@ -7,15 +7,46 @@ on:
 
 jobs:
   snap_core:
+    name: Snap Core
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Snap Core
+      - name: Invoke Snap
         shell: pwsh
         run: ./snap.ps1
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: deployed
+          keep_files: true
+
+  snap_toolchain:
+    name: Snap Toolchain
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest }
+          # - { os: macos-latest }
+          # - { os: macos-13 }
+          - { os: windows-latest }
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Invoke Snap
+        shell: pwsh
+        run: ./snap.ps1 -SnapToolchain
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

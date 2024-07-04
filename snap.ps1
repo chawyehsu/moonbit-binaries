@@ -149,9 +149,14 @@ function Invoke-SnapBinaries {
         $LatestVersion = "$($Matches[1])+$($Matches[2])"
         $Sha256 = (Get-FileHash -Path $File -Algorithm SHA256).Hash.ToLower()
 
+        $VersionedFilename = "moonbit-v$LatestVersion-$Arch.tar.gz"
+        if ($Arch -eq 'win-x64') {
+            $VersionedFilename = "moonbit-v$LatestVersion-$Arch.zip"
+        }
+
         $LatestRelease = @{
             "version" = $LatestVersion
-            "name" = "moonbit-v$LatestVersion-$Arch.zip"
+            "name" = $VersionedFilename
             "sha256" = $Sha256
         }
 
@@ -165,12 +170,8 @@ function Invoke-SnapBinaries {
         Copy-Item -Path $File -Destination "$PSScriptRoot/dist/latest/" -Force
         "$Sha256  $Filename" | Out-File -FilePath "$PSScriptRoot/dist/latest/$Filename.sha256" -Encoding ascii -Force
         New-Item -Path "$PSScriptRoot/dist/$LatestVersion" -ItemType Directory -Force | Out-Null
-        $NewName = "moonbit-v$LatestVersion-$Arch.tar.gz"
-        if ($Arch -eq 'win-x64') {
-            $NewName = "moonbit-v$LatestVersion-$Arch.zip"
-        }
-        Copy-Item -Path $File -Destination "$PSScriptRoot/dist/$LatestVersion/$NewName" -Force
-        "$Sha256  $NewName" | Out-File -FilePath "$PSScriptRoot/dist/$LatestVersion/$NewName.sha256" -Encoding ascii -Force
+        Copy-Item -Path $File -Destination "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename" -Force
+        "$Sha256  $VersionedFilename" | Out-File -FilePath "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename.sha256" -Encoding ascii -Force
     } else {
         Write-Error "Failed to get latest moonbit version number"
     }

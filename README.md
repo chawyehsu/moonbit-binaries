@@ -7,9 +7,15 @@
 For more information about the MoonBit programming language, see [moonbitlang's website][moonbit-website].
 
 
+## Getting Started
+
+Archived toolchain binaries and the core standard library of MoonBit are available from the [gh-pages](https://github.com/chawyehsu/moonbit-binaries/tree/gh-pages) branch of this repository.
+
+Earlier versions released before this service went live are not available.
+
 ## License
 
-**moonbit-binaries** © [Chawye Hsu](https://github.com/chawyehsu). Released under the [MIT](LICENSE) license.
+**moonbit-binaries** © [Chawye Hsu](https://github.com/chawyehsu). Released under the [MIT](LICENSE) license.  
 For the license of the binaries/archives of MoonBit, please refer to its website.
 
 > [Blog](https://chawyehsu.com) · GitHub [@chawyehsu](https://github.com/chawyehsu) · Twitter [@chawyehsu](https://twitter.com/chawyehsu)

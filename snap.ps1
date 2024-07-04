@@ -41,7 +41,7 @@ function Invoke-SnapCore {
     Write-Debug "Checking last modified date of moonbit core ..."
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $CoreEntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    [OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
+    [System.Management.Automation.OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not $Index.ContainsKey('core')) {
         $Index.'core' = [ordered]@{
@@ -50,10 +50,10 @@ function Invoke-SnapCore {
         }
     }
 
-    # if ($Index.'core'.last_modified -eq $DateTime) {
-    #     Write-Output "Moonbit core is up to date."
-    #     return
-    # }
+    if ($Index.'core'.last_modified -eq $DateTime) {
+        Write-Output "Moonbit core is up to date."
+        return
+    }
 
     $Index.'core'.last_modified = $DateTime
 
@@ -106,7 +106,7 @@ function Invoke-SnapBinaries {
     Write-Debug "Checking last modified date of moonbit binaries ..."
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $EntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    [OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
+    [System.Management.Automation.OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not $Index.ContainsKey($Arch)) {
         $Index.$Arch = [ordered]@{

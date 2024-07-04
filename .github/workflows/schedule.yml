@@ -5,8 +5,9 @@ on:
   push:
     branches:
       - main
-  # schedule:
-  #   - cron: '0 0 * * *'
+  schedule:
+    # run every 6 hours at 10 minutes past the hour
+    - cron: '10 */6 * * *'
 
 jobs:
   snap_core:
@@ -15,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Invoke Snap
         shell: pwsh
@@ -38,7 +39,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Invoke Snap
         shell: pwsh
@@ -61,7 +62,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Invoke Snap
         shell: pwsh
@@ -84,7 +85,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Invoke Snap
         shell: pwsh
@@ -107,7 +108,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Invoke Snap
         shell: pwsh

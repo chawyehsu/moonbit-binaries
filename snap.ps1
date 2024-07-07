@@ -6,6 +6,8 @@
     Moonbit snap script.
 .DESCRIPTION
     Snap moonbit core and binaries.
+.PARAMETER Merge
+    Merge partial index files.
 .PARAMETER SnapToolchain
     Snap moonbit toolchain. Default is to snap moonbit core.
 .PARAMETER Force
@@ -14,6 +16,8 @@
     https://github.com/chawyehsu/moonbit-binaries
 #>
 param(
+    [Parameter(Mandatory = $false)]
+    [Switch]$Merge,
     [Parameter(Mandatory = $false)]
     [Switch]$SnapToolchain,
     [Parameter(Mandatory = $false)]
@@ -185,9 +189,35 @@ function Invoke-SnapBinaries {
     }
 }
 
+function Invoke-MergeIndex {
+    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
+
+    @('core', 'darwin-arm64', 'darwin-x64', 'linux-x64', 'win-x64') | ForEach-Object {
+        $PartialIndexFile = "$PSScriptRoot/tmp/index-$_.json"
+        if (-not (Test-Path $PartialIndexFile)) {
+            return
+        }
+    
+        $PartialIndex = Get-Content -Path $PartialIndexFile | ConvertFrom-Json -AsHashtable
+
+        if (-not $Index.ContainsKey($_)) {
+            return
+        }
+
+        Write-Debug "Merging partial index file 'index-$_.json' ..."
+        $Index.$_.last_modified = $PartialIndex.$_.last_modified
+        $Index.$_.releases = $($PartialIndex.$_.releases; $Index.$_.releases) | Sort-Object -Unique -Property { $_.version } -Descending
+    }
+    
+    $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
+    
+}
+
 Invoke-CheckoutDeployment
 
-if ($SnapToolchain) {
+if ($Merge) {
+    Invoke-MergeIndex
+} elseif ($SnapToolchain) {
     if ($IsWindows) {
         Invoke-SnapBinaries -Arch 'win-x64' -EntryPoint 'https://cli.moonbitlang.com/binaries/latest/moonbit-windows-x86_64.zip'
     }

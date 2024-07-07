@@ -10,109 +10,55 @@ on:
     - cron: '10 */6 * * *'
 
 jobs:
-  snap_core:
-    name: Snap Core
-    runs-on: ubuntu-latest
+  snap:
+    name: Invoke Snap
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, core: true }
+          - { os: ubuntu-latest }
+          - { os: windows-latest }
+          - { os: macos-latest }
+          - { os: macos-13 }
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Invoke Snap
+      - name: Snap Core
+        if: ${{ matrix.core == true }}
         shell: pwsh
         run: ./snap.ps1
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
+      - name: Snap Toolchain
+        if: ${{ matrix.core != true }}
+        shell: pwsh
+        run: ./snap.ps1 -SnapToolchain
 
-  snap_toolchain_linux:
-    needs: snap_core
-    name: Snap Toolchain Linux
+      - name: Upload Index
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./tmp/index-*.json
+
+  merge:
+    needs: snap
+    name: Update Index
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Invoke Snap
-        shell: pwsh
-        run: ./snap.ps1 -SnapToolchain
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Download Index
+        uses: actions/download-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
+          path: ./tmp
 
-  snap_toolchain_win:
-    needs: snap_toolchain_linux
-    name: Snap Toolchain Windows
-    runs-on: windows-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Invoke Snap
+      - name: Merge Index
         shell: pwsh
-        run: ./snap.ps1 -SnapToolchain
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
-
-  snap_toolchain_macos:
-    needs: snap_toolchain_win
-    name: Snap Toolchain macOS ARM
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Invoke Snap
-        shell: pwsh
-        run: ./snap.ps1 -SnapToolchain
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
-
-  snap_toolchain_macos_x64:
-    needs: snap_toolchain_macos
-    name: Snap Toolchain macOS
-    runs-on: macos-13
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Invoke Snap
-        shell: pwsh
-        run: ./snap.ps1 -SnapToolchain
+        run: ./snap.ps1 -Merge
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

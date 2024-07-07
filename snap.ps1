@@ -6,14 +6,22 @@
     Moonbit snap script.
 .DESCRIPTION
     Snap moonbit core and binaries.
+.PARAMETER Merge
+    Merge partial index files.
 .PARAMETER SnapToolchain
     Snap moonbit toolchain. Default is to snap moonbit core.
+.PARAMETER Force
+    Force to snap moonbit core and binaries.
 .LINK
     https://github.com/chawyehsu/moonbit-binaries
 #>
 param(
     [Parameter(Mandatory = $false)]
-    [Switch]$SnapToolchain
+    [Switch]$Merge,
+    [Parameter(Mandatory = $false)]
+    [Switch]$SnapToolchain,
+    [Parameter(Mandatory = $false)]
+    [Switch]$Force
 )
 
 Set-StrictMode -Version Latest
@@ -50,7 +58,7 @@ function Invoke-SnapCore {
         }
     }
 
-    if ($Index.'core'.last_modified -eq $DateTime) {
+    if (!$Force -and $Index.'core'.last_modified -eq $DateTime) {
         Write-Output "Moonbit core is up to date."
         return
     }
@@ -61,9 +69,7 @@ function Invoke-SnapCore {
     New-Item -Path "$PSScriptRoot/tmp" -ItemType Directory -Force | Out-Null
     $File = "$PSScriptRoot/tmp/moonbit-core-latest.zip"
 
-    if (-not (Test-Path $File)) {
-        Invoke-WebRequest -Uri $CoreEntryPoint -OutFile $File
-    }
+    Invoke-WebRequest -Uri $CoreEntryPoint -OutFile $File
 
     Write-Debug "Getting latest moonbit core version number ..."
     Push-Location "$PSScriptRoot/tmp"
@@ -80,11 +86,14 @@ function Invoke-SnapCore {
         "sha256" = $Sha256
     }
 
-    $Index.'core'.releases += ($LatestRelease)
-    $Index.'core'.releases = @($Index.'core'.releases | Sort-Object { $_.version } -Descending)
+    $Index.'core'.releases = @($LatestRelease)
 
-    Write-Debug "Updating index file ..."
-    $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
+    Write-Debug "Writing partial index file ..."
+    [System.Management.Automation.OrderedHashtable]$PartialIndex = [ordered]@{
+        "core" = $Index.'core'
+    }
+
+    $PartialIndex | ConvertTo-Json -Depth 100 | Set-Content -Path "$PSScriptRoot/tmp/index-core.json"
 
     Write-Debug "Copying moonbit core to dist folder ..."
     New-Item -Path "$PSScriptRoot/dist/core" -ItemType Directory -Force | Out-Null
@@ -115,7 +124,7 @@ function Invoke-SnapBinaries {
         }
     }
 
-    if ($Index.$Arch.last_modified -eq $DateTime) {
+    if (!$Force -and $Index.$Arch.last_modified -eq $DateTime) {
         Write-Output "Moonbit binaries are up to date."
         return
     }
@@ -130,9 +139,7 @@ function Invoke-SnapBinaries {
     }
     $File = "$PSScriptRoot/tmp/$Filename"
 
-    if (-not (Test-Path $File)) {
-        Invoke-WebRequest -Uri $ENTRYPOINT -OutFile $File
-    }
+    Invoke-WebRequest -Uri $ENTRYPOINT -OutFile $File
 
     Write-Debug "Getting latest moonbit version number ..."
     Push-Location "$PSScriptRoot/tmp"
@@ -161,11 +168,14 @@ function Invoke-SnapBinaries {
             "sha256" = $Sha256
         }
 
-        $Index.$Arch.releases += ($LatestRelease)
-        $Index.$Arch.releases = @($Index.$Arch.releases | Sort-Object { $_.version } -Descending)
+        $Index.$Arch.releases = @($LatestRelease)
 
-        Write-Debug "Updating index file ..."
-        $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
+        Write-Debug "Writing partial index file ..."
+        [System.Management.Automation.OrderedHashtable]$PartialIndex = [ordered]@{
+            $Arch = $Index.$Arch
+        }
+
+        $PartialIndex | ConvertTo-Json -Depth 100 | Set-Content -Path "$PSScriptRoot/tmp/index-$Arch.json"
 
         Write-Debug "Copying moonbit binaries to dist folder ..."
         New-Item -Path "$PSScriptRoot/dist/latest" -ItemType Directory -Force | Out-Null
@@ -179,9 +189,35 @@ function Invoke-SnapBinaries {
     }
 }
 
+function Invoke-MergeIndex {
+    $Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
+
+    @('core', 'darwin-arm64', 'darwin-x64', 'linux-x64', 'win-x64') | ForEach-Object {
+        $PartialIndexFile = "$PSScriptRoot/tmp/index-$_.json"
+        if (-not (Test-Path $PartialIndexFile)) {
+            return
+        }
+    
+        $PartialIndex = Get-Content -Path $PartialIndexFile | ConvertFrom-Json -AsHashtable
+
+        if (-not $Index.ContainsKey($_)) {
+            return
+        }
+
+        Write-Debug "Merging partial index file 'index-$_.json' ..."
+        $Index.$_.last_modified = $PartialIndex.$_.last_modified
+        $Index.$_.releases = $($PartialIndex.$_.releases; $Index.$_.releases) | Sort-Object -Unique -Property { $_.version } -Descending
+    }
+    
+    $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
+    
+}
+
 Invoke-CheckoutDeployment
 
-if ($SnapToolchain) {
+if ($Merge) {
+    Invoke-MergeIndex
+} elseif ($SnapToolchain) {
     if ($IsWindows) {
         Invoke-SnapBinaries -Arch 'win-x64' -EntryPoint 'https://cli.moonbitlang.com/binaries/latest/moonbit-windows-x86_64.zip'
     }

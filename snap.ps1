@@ -26,14 +26,14 @@ param(
 
 Set-StrictMode -Version Latest
 
-$DebugPreference = "Continue"
-$ErrorActionPreference = "Stop"
+$DebugPreference = 'Continue'
+$ErrorActionPreference = 'Stop'
 
 $DistDir = "$PSScriptRoot/dist"
 $IndexFile = "$DistDir/index.json"
 
 function Invoke-CheckoutDeployment {
-    Write-Debug "Getting latest moonbit-binaries index ..."
+    Write-Debug 'Getting latest moonbit-binaries index ...'
     if (Test-Path $DistDir) {
         Remove-Item -Path $DistDir -Recurse -Force
     }
@@ -46,32 +46,32 @@ function Invoke-CheckoutDeployment {
 function Invoke-SnapCore {
     $CoreEntryPoint = 'https://cli.moonbitlang.com/cores/core-latest.zip'
 
-    Write-Debug "Checking last modified date of moonbit core ..."
+    Write-Debug 'Checking last modified date of moonbit core ...'
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $CoreEntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
     [System.Management.Automation.OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not $Index.ContainsKey('core')) {
         $Index.'core' = [ordered]@{
-            "last_modified" = $null
-            "releases" = @()
+            'last_modified' = $null
+            'releases'      = @()
         }
     }
 
     if (!$Force -and $Index.'core'.last_modified -eq $DateTime) {
-        Write-Output "Moonbit core is up to date."
+        Write-Output 'Moonbit core is up to date.'
         return
     }
 
     $Index.'core'.last_modified = $DateTime
 
-    Write-Debug "Downloading latest moonbit core ..."
+    Write-Debug 'Downloading latest moonbit core ...'
     New-Item -Path "$PSScriptRoot/tmp" -ItemType Directory -Force | Out-Null
     $File = "$PSScriptRoot/tmp/moonbit-core-latest.zip"
 
     Invoke-WebRequest -Uri $CoreEntryPoint -OutFile $File
 
-    Write-Debug "Getting latest moonbit core version number ..."
+    Write-Debug 'Getting latest moonbit core version number ...'
     Push-Location "$PSScriptRoot/tmp"
     Expand-Archive -Path $File -DestinationPath "$PSScriptRoot/tmp" -Force
     $MoonModJson = Get-Content -Path "$PSScriptRoot/tmp/core/moon.mod.json" | ConvertFrom-Json
@@ -81,21 +81,21 @@ function Invoke-SnapCore {
     $Sha256 = (Get-FileHash -Path $File -Algorithm SHA256).Hash.ToLower()
 
     $LatestRelease = [ordered]@{
-        "version" = $LatestVersion
-        "name" = "moonbit-core-v$LatestVersion.zip"
-        "sha256" = $Sha256
+        'version' = $LatestVersion
+        'name'    = "moonbit-core-v$LatestVersion.zip"
+        'sha256'  = $Sha256
     }
 
     $Index.'core'.releases = @($LatestRelease)
 
-    Write-Debug "Writing partial index file ..."
+    Write-Debug 'Writing partial index file ...'
     [System.Management.Automation.OrderedHashtable]$PartialIndex = [ordered]@{
-        "core" = $Index.'core'
+        'core' = $Index.'core'
     }
 
     $PartialIndex | ConvertTo-Json -Depth 100 | Set-Content -Path "$PSScriptRoot/tmp/index-core.json"
 
-    Write-Debug "Copying moonbit core to dist folder ..."
+    Write-Debug 'Copying moonbit core to dist folder ...'
     New-Item -Path "$PSScriptRoot/dist/core" -ItemType Directory -Force | Out-Null
     Copy-Item -Path $File -Destination "$PSScriptRoot/dist/core/" -Force
     "$Sha256  moonbit-core-latest.zip" | Out-File -FilePath "$PSScriptRoot/dist/core/moonbit-core-latest.zip.sha256" -Encoding ascii -Force
@@ -112,26 +112,26 @@ function Invoke-SnapBinaries {
         [string]$EntryPoint
     )
 
-    Write-Debug "Checking last modified date of moonbit binaries ..."
+    Write-Debug 'Checking last modified date of moonbit binaries ...'
     $DateTime = Get-Date "$((Invoke-WebRequest -Method HEAD $EntryPoint).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
     [System.Management.Automation.OrderedHashtable]$Index = Get-Content -Path $IndexFile | ConvertFrom-Json -AsHashtable
 
     if (-not $Index.ContainsKey($Arch)) {
         $Index.$Arch = [ordered]@{
-            "last_modified" = $null
-            "releases" = @()
+            'last_modified' = $null
+            'releases'      = @()
         }
     }
 
     if (!$Force -and $Index.$Arch.last_modified -eq $DateTime) {
-        Write-Output "Moonbit binaries are up to date."
+        Write-Output 'Moonbit binaries are up to date.'
         return
     }
 
     $Index.$Arch.last_modified = $DateTime
 
-    Write-Debug "Downloading latest moonbit ..."
+    Write-Debug 'Downloading latest moonbit ...'
     New-Item -Path "$PSScriptRoot/tmp" -ItemType Directory -Force | Out-Null
     $Filename = "moonbit-latest-$Arch.tar.gz"
     if ($Arch -eq 'win-x64') {
@@ -141,7 +141,7 @@ function Invoke-SnapBinaries {
 
     Invoke-WebRequest -Uri $ENTRYPOINT -OutFile $File
 
-    Write-Debug "Getting latest moonbit version number ..."
+    Write-Debug 'Getting latest moonbit version number ...'
     Push-Location "$PSScriptRoot/tmp"
     if ($Arch -eq 'win-x64') {
         Expand-Archive -Path $File -DestinationPath "$PSScriptRoot/tmp" -Force
@@ -163,21 +163,21 @@ function Invoke-SnapBinaries {
         }
 
         $LatestRelease = [ordered]@{
-            "version" = $LatestVersion
-            "name" = $VersionedFilename
-            "sha256" = $Sha256
+            'version' = $LatestVersion
+            'name'    = $VersionedFilename
+            'sha256'  = $Sha256
         }
 
         $Index.$Arch.releases = @($LatestRelease)
 
-        Write-Debug "Writing partial index file ..."
+        Write-Debug 'Writing partial index file ...'
         [System.Management.Automation.OrderedHashtable]$PartialIndex = [ordered]@{
             $Arch = $Index.$Arch
         }
 
         $PartialIndex | ConvertTo-Json -Depth 100 | Set-Content -Path "$PSScriptRoot/tmp/index-$Arch.json"
 
-        Write-Debug "Copying moonbit binaries to dist folder ..."
+        Write-Debug 'Copying moonbit binaries to dist folder ...'
         New-Item -Path "$PSScriptRoot/dist/latest" -ItemType Directory -Force | Out-Null
         Copy-Item -Path $File -Destination "$PSScriptRoot/dist/latest/" -Force
         "$Sha256  $Filename" | Out-File -FilePath "$PSScriptRoot/dist/latest/$Filename.sha256" -Encoding ascii -Force
@@ -185,7 +185,7 @@ function Invoke-SnapBinaries {
         Copy-Item -Path $File -Destination "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename" -Force
         "$Sha256  $VersionedFilename" | Out-File -FilePath "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename.sha256" -Encoding ascii -Force
     } else {
-        Write-Error "Failed to get latest moonbit version number"
+        Write-Error 'Failed to get latest moonbit version number'
     }
 }
 

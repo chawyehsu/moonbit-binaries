@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "editorconfig.editorconfig",
+        "redhat.vscode-yaml",
+        "ms-vscode.powershell",
+        "github.vscode-github-actions"
+    ]
+}

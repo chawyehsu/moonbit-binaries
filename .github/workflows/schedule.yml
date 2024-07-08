@@ -75,21 +75,25 @@ jobs:
         with:
           path: ./tmp
           pattern: index-*.json
+          merge-multiple: true
 
       - name: Download Binaries
         uses: actions/download-artifact@v4
         with:
           path: ./dist
           pattern: dist-*.zip
-
-      - name: Merge Index
-        shell: pwsh
-        run: ./snap.ps1 -Merge
+          merge-multiple: true
 
       - name: Check folders
         run: |
           ls -la ./dist
           ls -la ./tmp
+
+      - name: Merge Index
+        shell: pwsh
+        run: ./snap.ps1 -Merge
+
+
 
       # - name: Deploy
       #   uses: peaceiris/actions-gh-pages@v4

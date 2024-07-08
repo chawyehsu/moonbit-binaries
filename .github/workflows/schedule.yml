@@ -86,8 +86,8 @@ jobs:
 
       - name: Check folders
         run: |
-          ls -la ./dist
-          ls -la ./tmp
+          ls -R ./dist
+          ls -R ./tmp
 
       - name: Merge Index
         shell: pwsh

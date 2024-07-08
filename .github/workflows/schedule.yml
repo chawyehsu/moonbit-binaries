@@ -103,6 +103,7 @@ jobs:
           keep_files: true
 
       - name: Download Binaries
+        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
         uses: actions/download-artifact@v4
         with:
           path: ./dist
@@ -111,6 +112,7 @@ jobs:
 
       - name: Validate Binaries
         id: validate
+        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
         shell: pwsh
         run: |
           $tag = (Get-Content -Path ./dist/index.json -Raw | ConvertFrom-Json -AsHashtable).'core'.releases[0].version

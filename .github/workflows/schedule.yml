@@ -43,15 +43,23 @@ jobs:
           name: index-${{ matrix.name }}.json
           path: ./tmp/index-${{ matrix.name }}.json
 
-      - name: Deploy Binaries
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload Binaries
+        if: ${{ matrix.core == true }}
+        uses: actions/upload-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
+          name: dist-core.zip
+          path: |
+            ./dist
+            !./dist/index.json
+
+      - name: Upload Binaries
+        if: ${{ matrix.core != true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.name }}.zip
+          path: |
+            ./dist
+            !./dist/index.json
 
   merge:
     needs: snap
@@ -66,17 +74,29 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./tmp
+          pattern: index-*.json
+
+      - name: Download Binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+          pattern: dist-*.zip
 
       - name: Merge Index
         shell: pwsh
         run: ./snap.ps1 -Merge
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
+      - name: Check folders
+        run: |
+          ls -la ./dist
+          ls -la ./tmp
+
+      # - name: Deploy
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./dist
+      #     user_name: 'github-actions[bot]'
+      #     user_email: 'github-actions[bot]@users.noreply.github.com'
+      #     commit_message: deployed
+      #     keep_files: true

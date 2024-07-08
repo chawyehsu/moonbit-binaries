@@ -35,12 +35,12 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.core == true }}
         shell: pwsh
-        run: ./snap.ps1 -Force:$${{ github.event.inputs.force }}
+        run: ./snap.ps1 -Force:$${{ github.event.inputs.force && 'true' || 'false' }}
 
       - name: Snap Toolchain
         if: ${{ matrix.core != true }}
         shell: pwsh
-        run: ./snap.ps1 -SnapToolchain -Force:$${{ github.event.inputs.force }}
+        run: ./snap.ps1 -SnapToolchain -Force:$${{ github.event.inputs.force && 'true' || 'false' }}
 
       - name: Upload Index
         uses: actions/upload-artifact@v4

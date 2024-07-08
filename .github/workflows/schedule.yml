@@ -2,6 +2,11 @@ name: Snap Schedule
 
 on:
   workflow_dispatch:
+    inputs:
+      force:
+        description: Force snap even if up-to-date
+        type: boolean
+        default: false
   push:
     branches:
       - main
@@ -30,12 +35,12 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.core == true }}
         shell: pwsh
-        run: ./snap.ps1
+        run: ./snap.ps1 -Force:$${{ github.event.inputs.force }}
 
       - name: Snap Toolchain
         if: ${{ matrix.core != true }}
         shell: pwsh
-        run: ./snap.ps1 -SnapToolchain
+        run: ./snap.ps1 -SnapToolchain -Force:$${{ github.event.inputs.force }}
 
       - name: Upload Index
         uses: actions/upload-artifact@v4

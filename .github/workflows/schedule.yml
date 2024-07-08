@@ -83,11 +83,17 @@ jobs:
           merge-multiple: true
 
       - name: Merge Index
+        id: merge_index
         shell: pwsh
-        run: ./snap.ps1 -Merge
+        run: |
+          if (Test-Path ./tmp/index-*.json) {
+            "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            ./snap.ps1 -Merge
+          }
 
       - name: Deploy Index
         uses: peaceiris/actions-gh-pages@v4
+        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
@@ -117,7 +123,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: ${{ steps.validate.outputs.TAG }}
         with:
-          tag_name: ${{ steps.validate.outputs.TAG }}
+          tag_name: v${{ steps.validate.outputs.TAG }}
+          body: MoonBit release v${{ steps.validate.outputs.TAG }} archived
           files: |
             ./dist/${{ steps.validate.outputs.TAG }}/*
             ./dist/core/moonbit-core-v${{ steps.validate.outputs.TAG }}.zip*

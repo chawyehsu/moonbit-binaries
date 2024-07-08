@@ -84,14 +84,14 @@ jobs:
           pattern: dist-*.zip
           merge-multiple: true
 
+      - name: Merge Index
+        shell: pwsh
+        run: ./snap.ps1 -Merge
+
       - name: Check folders
         run: |
           ls -R ./dist
           ls -R ./tmp
-
-      - name: Merge Index
-        shell: pwsh
-        run: ./snap.ps1 -Merge
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4

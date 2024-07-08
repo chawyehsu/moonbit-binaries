@@ -93,14 +93,19 @@ jobs:
         shell: pwsh
         run: ./snap.ps1 -Merge
 
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: deployed
+          keep_files: true
 
-
-      # - name: Deploy
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./dist
-      #     user_name: 'github-actions[bot]'
-      #     user_email: 'github-actions[bot]@users.noreply.github.com'
-      #     commit_message: deployed
-      #     keep_files: true
+      - name: Cleanup
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            index-*.json
+            dist-*.zip

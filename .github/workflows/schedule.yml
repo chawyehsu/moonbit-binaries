@@ -93,11 +93,6 @@ jobs:
           pattern: dist-*.zip
           merge-multiple: true
 
-      - name: Check folders
-        run: |
-          ls -R ./dist
-          ls -R ./tmp
-
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:

@@ -82,16 +82,16 @@ jobs:
           pattern: index-*.json
           merge-multiple: true
 
+      - name: Merge Index
+        shell: pwsh
+        run: ./snap.ps1 -Merge
+
       - name: Download Binaries
         uses: actions/download-artifact@v4
         with:
           path: ./dist
           pattern: dist-*.zip
           merge-multiple: true
-
-      - name: Merge Index
-        shell: pwsh
-        run: ./snap.ps1 -Merge
 
       - name: Check folders
         run: |

@@ -17,11 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: ubuntu-latest, core: true }
-          - { os: ubuntu-latest }
-          - { os: windows-latest }
-          - { os: macos-latest }
-          - { os: macos-13 }
+          - { name: core, os: ubuntu-latest, core: true }
+          - { name: linux-x64, os: ubuntu-latest }
+          - { name: win-x64, os: windows-latest }
+          - { name: darwin-arm64, os: macos-latest }
+          - { name: darwin-x64, os: macos-13 }
 
     steps:
       - name: Checkout
@@ -40,7 +40,8 @@ jobs:
       - name: Upload Index
         uses: actions/upload-artifact@v4
         with:
-          path: ./tmp/index-*.json
+          name: index-${{ matrix.name }}.json
+          path: ./tmp/index-${{ matrix.name }}.json
 
       - name: Deploy Binaries
         uses: peaceiris/actions-gh-pages@v4

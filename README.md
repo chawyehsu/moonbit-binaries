@@ -2,14 +2,17 @@
 
 > Binaries archiving service for MoonBit programming language.
 
-[![Snap Schedule][ci-badge]][cicd] [![license][license-badge]](LICENSE)
+[![Snap Schedule][ci-badge]][cicd] [![license][license-badge]](LICENSE) [![downloads][downloads-badge]][releases]
 
 For more information about the MoonBit programming language, see [moonbitlang's website][moonbit-website].
 
+## Why
+
+While MoonBit in its early stages of development, only the latest build of the toolchain and the standard library is available on its website. There is currently no official way to obtain earlier versions of the toolchain and the standard library of MoonBit. This repository aims to provide a service to archive every release of the toolchain and the standard library, so that users may download and use them for research and development purposes.
 
 ## Getting Started
 
-Archived toolchain binaries and the core standard library of MoonBit are available from the [gh-pages](https://github.com/chawyehsu/moonbit-binaries/tree/gh-pages) branch of this repository.
+Archived toolchain binaries and the core standard library of MoonBit are available from the [releases] page and the [gh-pages] branch of this repository.
 
 Earlier versions released before this service went live are not available.
 
@@ -25,3 +28,7 @@ For the license of the binaries/archives of MoonBit, please refer to its website
 [cicd]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule.yml
 [license-badge]: https://img.shields.io/github/license/chawyehsu/moonbit-binaries
 [moonbit-website]: https://moonbitlang.com/
+[releases]: https://github.com/chawyehsu/moonbit-binaries/releases
+[gh-pages]: https://github.com/chawyehsu/moonbit-binaries/tree/gh-pages
+[releases]: https://github.com/chawyehsu/moonbit-binaries/releases/latest
+[downloads-badge]: https://img.shields.io/github/downloads/chawyehsu/moonbit-binaries/total

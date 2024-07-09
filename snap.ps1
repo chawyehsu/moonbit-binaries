@@ -97,8 +97,6 @@ function Invoke-SnapCore {
 
     Write-Debug 'Copying moonbit core to dist folder ...'
     New-Item -Path "$PSScriptRoot/dist/core" -ItemType Directory -Force | Out-Null
-    Copy-Item -Path $File -Destination "$PSScriptRoot/dist/core/" -Force
-    "$Sha256  moonbit-core-latest.zip" | Out-File -FilePath "$PSScriptRoot/dist/core/moonbit-core-latest.zip.sha256" -Encoding ascii -Force
     Copy-Item -Path $File -Destination "$PSScriptRoot/dist/core/$($LatestRelease.name)" -Force
     "$Sha256  $($LatestRelease.name)" | Out-File -FilePath "$PSScriptRoot/dist/core/$($LatestRelease.name).sha256" -Encoding ascii -Force
 }
@@ -178,9 +176,6 @@ function Invoke-SnapBinaries {
         $PartialIndex | ConvertTo-Json -Depth 100 | Set-Content -Path "$PSScriptRoot/tmp/index-$Arch.json"
 
         Write-Debug 'Copying moonbit binaries to dist folder ...'
-        New-Item -Path "$PSScriptRoot/dist/latest" -ItemType Directory -Force | Out-Null
-        Copy-Item -Path $File -Destination "$PSScriptRoot/dist/latest/" -Force
-        "$Sha256  $Filename" | Out-File -FilePath "$PSScriptRoot/dist/latest/$Filename.sha256" -Encoding ascii -Force
         New-Item -Path "$PSScriptRoot/dist/$LatestVersion" -ItemType Directory -Force | Out-Null
         Copy-Item -Path $File -Destination "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename" -Force
         "$Sha256  $VersionedFilename" | Out-File -FilePath "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename.sha256" -Encoding ascii -Force

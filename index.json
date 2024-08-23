@@ -1,7 +1,12 @@
 {
   "core": {
-    "last_modified": "20240820T1026250000Z",
+    "last_modified": "20240823T0917470000Z",
     "releases": [
+      {
+        "version": "0.1.20240823+c622a5ab0",
+        "name": "moonbit-core-v0.1.20240823+c622a5ab0.zip",
+        "sha256": "40d2513564fa0efe75161f4d28bd1125ae3076aaeab68089041e46ac815778af"
+      },
       {
         "version": "0.1.20240820+85e9a0dc8",
         "name": "moonbit-core-v0.1.20240820+85e9a0dc8.zip",
@@ -190,8 +195,13 @@
     ]
   },
   "darwin-arm64": {
-    "last_modified": "20240820T1023150000Z",
+    "last_modified": "20240823T0914400000Z",
     "releases": [
+      {
+        "version": "0.1.20240823+c622a5ab0",
+        "name": "moonbit-v0.1.20240823+c622a5ab0-darwin-arm64.tar.gz",
+        "sha256": "8d3349ef4927469a49ba30917cbbc61ba9f7f0a3bc5a397ef352689cefe206db"
+      },
       {
         "version": "0.1.20240820+85e9a0dc8",
         "name": "moonbit-v0.1.20240820+85e9a0dc8-darwin-arm64.tar.gz",
@@ -380,8 +390,13 @@
     ]
   },
   "darwin-x64": {
-    "last_modified": "20240820T1023150000Z",
+    "last_modified": "20240823T0914400000Z",
     "releases": [
+      {
+        "version": "0.1.20240823+c622a5ab0",
+        "name": "moonbit-v0.1.20240823+c622a5ab0-darwin-x64.tar.gz",
+        "sha256": "ed7f5ae5a8bed8c7b33005d75ee4cdf1f8e2328d0bfe85937a0153637d210fa5"
+      },
       {
         "version": "0.1.20240820+85e9a0dc8",
         "name": "moonbit-v0.1.20240820+85e9a0dc8-darwin-x64.tar.gz",
@@ -570,8 +585,13 @@
     ]
   },
   "linux-x64": {
-    "last_modified": "20240820T1023170000Z",
+    "last_modified": "20240823T0914400000Z",
     "releases": [
+      {
+        "version": "0.1.20240823+c622a5ab0",
+        "name": "moonbit-v0.1.20240823+c622a5ab0-linux-x64.tar.gz",
+        "sha256": "daaf7f6dc30a52dd4282df59adb68903b711009552e2e8c8e28df1e38d5c5cac"
+      },
       {
         "version": "0.1.20240820+85e9a0dc8",
         "name": "moonbit-v0.1.20240820+85e9a0dc8-linux-x64.tar.gz",
@@ -760,8 +780,13 @@
     ]
   },
   "win-x64": {
-    "last_modified": "20240820T1023150000Z",
+    "last_modified": "20240823T0914400000Z",
     "releases": [
+      {
+        "version": "0.1.20240823+c622a5ab0",
+        "name": "moonbit-v0.1.20240823+c622a5ab0-win-x64.zip",
+        "sha256": "ee0776bc96b920b5d06b2aacbb7cc67b7629967e4f5afbb70c5ffba5f214e09f"
+      },
       {
         "version": "0.1.20240820+85e9a0dc8",
         "name": "moonbit-v0.1.20240820+85e9a0dc8-win-x64.zip",

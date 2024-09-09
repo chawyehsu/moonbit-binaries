@@ -204,7 +204,7 @@ function Invoke-MergeIndex {
         $Index.$_.releases = $($PartialIndex.$_.releases; $Index.$_.releases) | Sort-Object -Unique -Property { $_.version } -Descending
     }
     
-    $Index | ConvertTo-Json -Depth 100 | Set-Content -Path $IndexFile
+    $Index | ConvertTo-Json -Depth 100 -Compress | Set-Content -Path $IndexFile
     
 }
 

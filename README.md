@@ -12,9 +12,15 @@ While MoonBit in its early stages of development, only the latest build of the t
 
 ## Getting Started
 
-Archived toolchain binaries and the core standard library of MoonBit are available from the [releases] page and the [gh-pages] branch of this repository.
+If you are using [Moonup] then you are all set. Moonup already provides you MoonBit toolchains available in this repository:
 
-Earlier versions released before this service went live are not available.
+```
+moonup install --list-available
+```
+
+If not, you may grab one from the [releases] page, the release index is available on the [gh-pages] branch of this repository.
+
+NOTE: Earlier versions released before this service went live are not available.
 
 ## License
 
@@ -32,3 +38,4 @@ For the license of the binaries/archives of MoonBit, please refer to its website
 [gh-pages]: https://github.com/chawyehsu/moonbit-binaries/tree/gh-pages
 [releases]: https://github.com/chawyehsu/moonbit-binaries/releases/latest
 [downloads-badge]: https://img.shields.io/github/downloads/chawyehsu/moonbit-binaries/total
+[Moonup]: https://github.com/chawyehsu/moonup

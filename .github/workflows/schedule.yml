@@ -87,8 +87,7 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path ./tmp/index-*.json) {
-            ./snap.ps1 -Merge
-            "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            ./snap.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           }
 
       - name: Deploy Index

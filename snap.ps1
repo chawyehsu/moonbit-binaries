@@ -181,6 +181,7 @@ function Invoke-SnapBinaries {
         "$Sha256  $VersionedFilename" | Out-File -FilePath "$PSScriptRoot/dist/$LatestVersion/$VersionedFilename.sha256" -Encoding ascii -Force
     } else {
         Write-Error 'Failed to get latest moonbit version number'
+        exit 1
     }
 }
 
@@ -203,9 +204,17 @@ function Invoke-MergeIndex {
         $Index.$_.last_modified = $PartialIndex.$_.last_modified
         $Index.$_.releases = $($PartialIndex.$_.releases; $Index.$_.releases) | Sort-Object -Unique -Property { $_.version } -Descending
     }
-    
+
+    $VersionCore = $Index.core.releases[0].version
+    @(('darwin-arm64', 'darwin-x64', 'linux-x64', 'win-x64')) | ForEach-Object {
+        $Version = $Index.$_.releases[0].version
+        if ($Version -ne $VersionCore) {
+            Write-Error "Version conflict between core ($VersionCore) and $_ ($Version)"
+            exit 1
+        }
+    }
+
     $Index | ConvertTo-Json -Depth 100 -Compress | Set-Content -Path $IndexFile
-    
 }
 
 Invoke-CheckoutDeployment

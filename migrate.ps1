@@ -38,19 +38,13 @@ $channelLatestReleases = $indexV1.core.releases
 $channelLatestReleases = $channelLatestReleases | ForEach-Object {
     [ordered]@{
         version = $_.version
-        targets = @(
-            'aarch64-apple-darwin'
-            'x86_64-apple-darwin'
-            'x86_64-unknown-linux'
-            'x86_64-pc-windows'
-        )
     }
 }
 
 $channelLatest = [ordered]@{
-    version       = 2
-    last_modified = $indexV1.core.last_modified
-    releases      = $channelLatestReleases
+    version      = 2
+    lastModified = $indexV1.core.last_modified
+    releases     = $channelLatestReleases
 }
 
 $v2JsonChannelLatestPath = "$workingDir/channel-latest.json"
@@ -61,13 +55,19 @@ Write-Debug "$($v2JsonChannelLatestPath):`n$v2JsonChannelLatest"
 
 # region index.json
 $indexV2 = [ordered]@{
-    version       = 2
-    last_modified = $indexV1.core.last_modified
-    channels      = @(
+    version      = 2
+    lastModified = $indexV1.core.last_modified
+    channels     = @(
         [ordered]@{
             name    = 'latest'
             version = $channelLatest.releases[-1].version
         }
+    )
+    targets      = @(
+        'aarch64-apple-darwin'
+        'x86_64-apple-darwin'
+        'x86_64-unknown-linux'
+        'x86_64-pc-windows'
     )
 }
 
@@ -80,7 +80,7 @@ Write-Debug "$($v2JsonIndexPath):`n$v2JsonIndex"
 # region components jsons
 $channelLatestReleases | ForEach-Object {
     $version = $_.version
-    $targets = $_.targets
+    $targets = $indexV2.targets
 
     $targets | ForEach-Object {
         $target = $_
@@ -91,13 +91,13 @@ $channelLatestReleases | ForEach-Object {
             New-Item -ItemType Directory -Path $parentDir | Out-Null
         }
 
-        $pkgToolchain = switch ($target) {
+        $fileToolchain = switch ($target) {
             'aarch64-apple-darwin' { "moonbit-v$version-darwin-arm64.tar.gz" }
             'x86_64-apple-darwin' { "moonbit-v$version-darwin-x64.tar.gz" }
             'x86_64-unknown-linux' { "moonbit-v$version-linux-x64.tar.gz" }
             'x86_64-pc-windows' { "moonbit-v$version-win-x64.zip" }
         }
-        $pkgCore = "moonbit-core-v$version.zip"
+        $fileLibcore = "moonbit-core-v$version.zip"
 
         $sha256Toolchain = switch ($target) {
             'aarch64-apple-darwin' { $indexV1.'darwin-arm64'.releases | Where-Object { $_.version -eq $version } | Select-Object -ExpandProperty sha256 }
@@ -105,20 +105,20 @@ $channelLatestReleases | ForEach-Object {
             'x86_64-unknown-linux' { $indexV1.'linux-x64'.releases | Where-Object { $_.version -eq $version } | Select-Object -ExpandProperty sha256 }
             'x86_64-pc-windows' { $indexV1.'win-x64'.releases | Where-Object { $_.version -eq $version } | Select-Object -ExpandProperty sha256 }
         }
-        $sha256Core = $indexV1.core.releases | Where-Object { $_.version -eq $version } | Select-Object -ExpandProperty sha256
+        $sha256Libcore = $indexV1.core.releases | Where-Object { $_.version -eq $version } | Select-Object -ExpandProperty sha256
 
         $components = [ordered]@{
             version    = 2
             components = @(
                 [ordered]@{
                     name   = 'toolchain'
-                    pkg    = $pkgToolchain
+                    file   = $fileToolchain
                     sha256 = $sha256Toolchain
                 }
                 [ordered]@{
                     name   = 'libcore'
-                    pkg    = $pkgCore
-                    sha256 = $sha256Core
+                    file   = $fileLibcore
+                    sha256 = $sha256Libcore
                 }
             )
         }

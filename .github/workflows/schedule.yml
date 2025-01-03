@@ -15,9 +15,9 @@ on:
     branches:
       - v2
       - main
-  schedule:
-    # run every 4 hours at 10 minutes past the hour
-    - cron: '10 */4 * * *'
+  # schedule:
+  #   # run every 4 hours at 10 minutes past the hour
+  #   - cron: '10 */4 * * *'
 
 jobs:
   snap:

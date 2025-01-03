@@ -97,7 +97,7 @@ jobs:
         run: |
           if (Test-Path -Path ./tmp/gha-artifacts) {
             $artifacts = Get-ChildItem -Path ./tmp/gha-artifacts -File
-            Write-Debug "Artifacts count: $($artifacts.Count)"
+            Write-Host "Artifacts count: $($artifacts.Count)"
             if ($artifacts.Count -gt 0) {
               "SHOULD_MERGE=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
               return
@@ -129,7 +129,7 @@ jobs:
           }
           # Remove component index json
           Remove-Item -Path ./tmp/gha-artifacts/*.json -Force
-          Write-Debug "Generated tag: $tag"
+          Write-Host "Generated tag: $tag"
           "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Create Release

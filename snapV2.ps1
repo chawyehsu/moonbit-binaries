@@ -231,7 +231,61 @@ function Invoke-MergeIndex {
     }
 
     $componentCoreJson = Get-Content -Path $componentCoreJsonFile | ConvertFrom-Json -AsHashtable
+    $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")
 
+    # Update channel index
+    if (-not (Test-Path $CHANNEL_INDEX_FILE)) {
+        $initChannelIndex = [ordered]@{
+            version      = 2
+            lastModified = $dateUpdated
+            releases     = @()
+        }
+        Write-Debug 'Creating channel index file ...'
+        $initChannelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
+    }
+    $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
+
+    $channelIndexNewRelease = switch ($Channel) {
+        'latest' {
+            [ordered]@{
+                version = $componentCoreJson.version
+            }
+        }
+        'nightly' {
+            [ordered]@{
+                version = $componentCoreJson.version
+                date    = $DateNightly
+            }
+        }
+    }
+
+    # Prevent duplicate releases written to the channel index
+    $releaseAlreadyExists = (
+        $channelIndex.releases | Where-Object {
+            $r = $_
+            switch ($Channel) {
+                'latest' { $r.version -eq $channelIndexNewRelease.version }
+                'nightly' { $r.date -eq $DateNightly }
+            }
+        } | Measure-Object
+    ).Count -gt 0
+
+    if ($releaseAlreadyExists) {
+        $msg = switch ($Channel) {
+            'latest' { "latest: $($channelIndexNewRelease.version)" }
+            'nightly' { "nightly: $DateNightly" }
+        }
+
+        Write-Warning "Duplicate release found in channel index. ($msg)"
+        exit 1
+    }
+
+    $channelIndex.lastModified = $dateUpdated
+    $channelIndex.releases = @($channelIndex.releases; $channelIndexNewRelease)
+    Write-Host 'INFO: Saving channel index ...'
+    $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
+
+    # Write component index
     @(
         'aarch64-apple-darwin'
         'x86_64-apple-darwin'
@@ -271,59 +325,6 @@ function Invoke-MergeIndex {
         New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
         $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
     }
-
-    $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")
-    # Update channel index
-    if (-not (Test-Path $CHANNEL_INDEX_FILE)) {
-        $initChannelIndex = [ordered]@{
-            version      = 2
-            lastModified = $dateUpdated
-            releases     = @()
-        }
-        Write-Debug 'Creating channel index file ...'
-        $initChannelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
-    }
-
-    $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
-    $channelIndexNewRelease = switch ($Channel) {
-        'latest' {
-            [ordered]@{
-                version = $componentCoreJson.version
-            }
-        }
-        'nightly' {
-            [ordered]@{
-                version = $componentCoreJson.version
-                date    = $DateNightly
-            }
-        }
-    }
-
-    $channelIndex.lastModified = $dateUpdated
-
-    # Prevent duplicate releases written to the channel index
-    $releaseAlreadyExists = (
-        $channelIndex.releases | Where-Object {
-            switch ($Channel) {
-                'latest' { $_.version -eq $channelIndexNewRelease.version }
-                'nightly' { $_.date -eq $DateNightly }
-            }
-        } | Measure-Object
-    ).Count -gt 0
-
-    if ($releaseAlreadyExists) {
-        $msg = switch ($Channel) {
-            'latest' { "latest: $($channelIndexNewRelease.version)" }
-            'nightly' { "nightly: $DateNightly" }
-        }
-
-        Write-Warning "Duplicate release found in channel index. ($msg)"
-        exit 1
-    }
-
-    $channelIndex.releases = @($channelIndex.releases; $channelIndexNewRelease)
-    Write-Host 'INFO: Saving channel index ...'
-    $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
 
     # Update main index
     $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable

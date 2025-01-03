@@ -95,13 +95,15 @@ jobs:
         id: validate_artifacts
         shell: pwsh
         run: |
-          $artifacts = Get-ChildItem -Path ./tmp/gha-artifacts -File
-          if ($artifacts.Count -eq 0) {
-            Write-Host "No artifacts found."
-            "SHOULD_MERGE=0" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          } else {
-            "SHOULD_MERGE=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          if (Test-Path -Path ./tmp/gha-artifacts) {
+            $artifacts = Get-ChildItem -Path ./tmp/gha-artifacts -File
+            if ($artifacts.Count -gt 0) {
+              "SHOULD_MERGE=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+              return
+            }
           }
+          Write-Host "No artifacts found."
+          "SHOULD_MERGE=0" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Merge Index
         id: merge_index

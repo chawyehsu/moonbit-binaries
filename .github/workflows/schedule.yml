@@ -70,7 +70,9 @@ jobs:
       - name: Merge Index
         id: merge_index
         shell: pwsh
-        run: ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: |
+          Get-ChildItem -Path ./tmp/gha-artifacts
+          ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       # - name: Deploy Index
       #   uses: peaceiris/actions-gh-pages@v4

@@ -27,6 +27,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout Deployed
+        uses: actions/checkout@v4
+        with:
+          repository: chawyehsu/moonbit-binaries
+          ref: gh-pages
+          path: ./tmp/dist
+
       - name: Snap Core
         if: ${{ matrix.is_core == true }}
         shell: pwsh

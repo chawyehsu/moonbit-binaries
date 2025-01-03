@@ -110,14 +110,6 @@ jobs:
         shell: pwsh
         run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v7
-      #   with:
-      #     path: ./tmp/dist
-      #     base: gh-pages
-      #     title: "chore: update index"
-      #     commit-message: "chore: update index"
-
       - name: Generate Release Tag
         id: generate_tag
         if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
@@ -140,7 +132,7 @@ jobs:
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
-        if: ${{ github.repository == 'chawyehsu/moonbit-binaries' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+        if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
         with:
           tag_name: ${{ steps.generate_tag.outputs.TAG }}
           body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
@@ -149,10 +141,8 @@ jobs:
 
       - name: Deploy Index
         uses: peaceiris/actions-gh-pages@v4
-        if: ${{ github.repository == 'chawyehsu/moonbit-binaries' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+        if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
         with:
-          # external_repository: chawyehsu/moonbit-binaries
-          # personal_token: ${{ secrets.PERSONAL_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./tmp/dist
           user_name: 'github-actions[bot]'

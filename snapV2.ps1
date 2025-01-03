@@ -231,15 +231,15 @@ function Invoke-MergeIndex {
         $componentIndex = [ordered]@{
             version    = 2
             components = @(
-                $componentToolchainJson | Select-Object -Property name, file, sha256,
+                $componentToolchainJson | Select-Object -Property name, file, sha256
                 $componentCoreJson | Select-Object -Property name, file, sha256
             )
         }
 
-        $componentIndexFilename = "$componentToolchainVersion/$_.json"
-        Write-Host "INFO: Saving component index '$componentIndexFilename' ..."
-        $componentIndexPath = "$DIST_DIR/$Channel/$componentToolchainVersion/$componentIndexFilename"
-        $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $componentIndexPath
+        Write-Host "INFO: Saving component index '$_.json' ..."
+        $componentIndexPath = "$DIST_DIR/$Channel/$componentToolchainVersion"
+        New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
+        $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
     }
 
     $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")

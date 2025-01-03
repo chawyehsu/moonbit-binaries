@@ -22,9 +22,11 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$Production = $(if ($env:CI) { $true } else { $false }),
     [Parameter(Mandatory = $false)]
-    [Switch]$SnapToolchain,
+    [switch]$SnapToolchain,
     [Parameter(Mandatory = $false)]
-    [Switch]$Force
+    [switch]$KeepArtifacts = $Merge,
+    [Parameter(Mandatory = $false)]
+    [switch]$Force
 )
 
 Set-StrictMode -Version Latest
@@ -51,7 +53,7 @@ $INDEX_FILE = "$DIST_DIR/index.json"
 $CHANNEL_INDEX_FILE = "$DIST_DIR/channel-$Channel.json"
 
 function Clear-WorkingDir {
-    if ($Production) {
+    if ($Production -and (-not $KeepArtifacts)) {
         Remove-Item $DOWNLOAD_DIR -Force -Recurse -ErrorAction SilentlyContinue
         Remove-Item $GHA_ARTIFACTS_DIR -Force -Recurse -ErrorAction SilentlyContinue
         Remove-Item $DIST_DIR -Force -Recurse -ErrorAction SilentlyContinue

@@ -14,6 +14,7 @@ on:
   push:
     branches:
       - v2
+      - main
   schedule:
     # run every 4 hours at 10 minutes past the hour
     - cron: '10 */4 * * *'
@@ -95,59 +96,57 @@ jobs:
         shell: pwsh
         run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v7
+      #   with:
+      #     path: ./tmp/dist
+      #     base: gh-pages
+      #     title: "chore: update index"
+      #     commit-message: "chore: update index"
+
+      - name: Generate Release Tag
+        id: validate
+        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
+        shell: pwsh
+        run: |
+          $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
+          $tag = switch (${{ github.event.inputs.channel || 'latest' }}) {
+            'latest' {
+              $version = $channels | Where-Object { $_.name -eq 'latest' } | Select-Object -ExpandProperty version -First 1
+              "v$version"
+            }
+            'nightly' {
+              $date = $channels | Where-Object { $_.name -eq 'nightly' } | Select-Object -ExpandProperty date -First 1
+              "nightly-$date"
+            }
+          }
+          # Remove component index json
+          Remove-Item -Path ./tmp/gha-artifacts/*.json -Force
+          "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: ${{ github.repository == 'chawyehsu/moonbit-binaries' && github.ref == 'refs/heads/main' && steps.validate.outputs.TAG }}
         with:
-          path: ./tmp/dist
-          base: gh-pages
-          title: "chore: update index"
-          commit-message: "chore: update index"
-          signoff: true
-          draft: true
+          tag_name: ${{ steps.validate.outputs.TAG }}
+          body: "MoonBit release ${{ steps.validate.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
+          files: |
+            ./tmp/gha-artifacts/*${{ steps.validate.outputs.TAG }}*
 
-      # - name: Deploy Index
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./dist
-      #     user_name: 'github-actions[bot]'
-      #     user_email: 'github-actions[bot]@users.noreply.github.com'
-      #     commit_message: deployed
-      #     keep_files: true
-
-      # - name: Download Binaries
-      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     path: ./dist
-      #     pattern: dist-*.zip
-      #     merge-multiple: true
-
-      # - name: Validate Binaries
-      #   id: validate
-      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-      #   shell: pwsh
-      #   run: |
-      #     $tag = (Get-Content -Path ./dist/index.json -Raw | ConvertFrom-Json -AsHashtable).'core'.releases[0].version
-      #     $tagDir = "./dist/$tag"
-      #     if (Test-Path $tagDir) {
-      #       "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-      #     }
-
-      # - name: Create Release
-      #   uses: softprops/action-gh-release@v2
-      #   if: ${{ steps.validate.outputs.TAG }}
-      #   with:
-      #     tag_name: v${{ steps.validate.outputs.TAG }}
-      #     body: MoonBit release v${{ steps.validate.outputs.TAG }} archived
-      #     files: |
-      #       ./dist/${{ steps.validate.outputs.TAG }}/*
-      #       ./dist/core/moonbit-core-v${{ steps.validate.outputs.TAG }}.zip*
+      - name: Deploy Index
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.repository == 'chawyehsu/moonbit-binaries' && github.ref == 'refs/heads/main' && steps.validate.outputs.TAG }}
+        with:
+          # external_repository: chawyehsu/moonbit-binaries
+          # personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./tmp/dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: update index
+          keep_files: true
 
       # - name: Cleanup
       #   uses: geekyeggo/delete-artifact@v5
       #   with:
-      #     name: |
-      #       index-*.json
-      #       dist-*.zip
+      #     name: '*'

@@ -110,7 +110,7 @@ jobs:
         shell: pwsh
         run: |
           $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
-          $tag = switch (${{ github.event.inputs.channel || 'latest' }}) {
+          $tag = switch ('${{ github.event.inputs.channel || 'latest' }}') {
             'latest' {
               $version = $channels | Where-Object { $_.name -eq 'latest' } | Select-Object -ExpandProperty version -First 1
               "v$version"

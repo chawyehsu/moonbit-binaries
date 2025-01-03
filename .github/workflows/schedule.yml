@@ -2,6 +2,15 @@ name: Snap Schedule
 
 on:
   workflow_dispatch:
+    inputs:
+      channel:
+        description: 'The channel to snap'
+        default: latest
+        required: true
+        type: choice
+        options:
+          - latest
+          - nightly
   push:
     branches:
       - v2
@@ -37,7 +46,7 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.is_core == true }}
         shell: pwsh
-        run: ./snapV2.ps1
+        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel }}
 
       - name: Upload Core
         if: ${{ matrix.is_core == true }}
@@ -49,7 +58,7 @@ jobs:
       - name: Snap Toolchain
         if: ${{ matrix.is_core != true }}
         shell: pwsh
-        run: ./snapV2.ps1 -SnapToolchain
+        run: ./snapV2.ps1 -SnapToolchain -Channel ${{ github.event.inputs.channel }}
 
       - name: Upload Toolchain
         if: ${{ matrix.is_core != true }}
@@ -84,7 +93,7 @@ jobs:
       - name: Merge Index
         id: merge_index
         shell: pwsh
-        run: ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7

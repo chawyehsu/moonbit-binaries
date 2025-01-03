@@ -60,6 +60,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout Deployed
+        uses: actions/checkout@v4
+        with:
+          repository: chawyehsu/moonbit-binaries
+          ref: gh-pages
+          path: ./tmp/dist
+
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
@@ -70,9 +77,15 @@ jobs:
       - name: Merge Index
         id: merge_index
         shell: pwsh
-        run: |
-          Get-ChildItem -Path ./tmp/gha-artifacts
-          ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          path: ./tmp/dist
+          base: gh-pages
+          title: "chore: update index"
+          draft: true
 
       # - name: Deploy Index
       #   uses: peaceiris/actions-gh-pages@v4

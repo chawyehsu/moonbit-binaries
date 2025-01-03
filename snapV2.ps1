@@ -300,6 +300,27 @@ function Invoke-MergeIndex {
     }
 
     $channelIndex.lastModified = $dateUpdated
+
+    # Prevent duplicate releases written to the channel index
+    $releaseAlreadyExists = (
+        $channelIndex.releases | Where-Object {
+            switch ($Channel) {
+                'latest' { $_.version -eq $channelIndexNewRelease.version }
+                'nightly' { $_.date -eq $DateNightly }
+            }
+        } | Measure-Object
+    ).Count -gt 0
+
+    if ($releaseAlreadyExists) {
+        $msg = switch ($Channel) {
+            'latest' { "latest: $($channelIndexNewRelease.version)" }
+            'nightly' { "nightly: $DateNightly" }
+        }
+
+        Write-Warning "Duplicate release found in channel index. ($msg)"
+        exit 1
+    }
+
     $channelIndex.releases = @($channelIndex.releases; $channelIndexNewRelease)
     Write-Host 'INFO: Saving channel index ...'
     $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE

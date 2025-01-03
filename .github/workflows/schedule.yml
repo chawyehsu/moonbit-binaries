@@ -103,7 +103,6 @@ jobs:
             }
           }
           Write-Host "No artifacts found."
-          "SHOULD_MERGE=0" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Merge Index
         id: merge_index

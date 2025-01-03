@@ -34,23 +34,13 @@ Set-StrictMode -Version Latest
 $DebugPreference = if ((-not $Production) -or $env:CI) { 'Continue' } else { 'SilentlyContinue' }
 $ErrorActionPreference = 'Stop'
 
-$INDEX_V2_URL = if (-not $Production) {
-    'http://localhost:8080/index.json'
-} else {
-    'https://raw.githubusercontent.com/chawyehsu/moonbit-binaries/gh-pages/v2/index.json'
-}
-$CHANNEL_INDEX_URL = if (-not $Production) {
-    "http://localhost:8080/channel-$Channel.json"
-} else {
-    "https://raw.githubusercontent.com/chawyehsu/moonbit-binaries/gh-pages/v2/channel-$Channel.json"
-}
-
 $DOWNLOAD_DIR = "$PSScriptRoot/tmp/download"
 $GHA_ARTIFACTS_DIR = "$PSScriptRoot/tmp/gha-artifacts"
-$DIST_DIR = "$PSScriptRoot/tmp/dist/v2"
+$DIST_DIR = "$PSScriptRoot/tmp/dist"
+$DIST_V2_BASEDIR = "$DIST_DIR/v2"
 
-$INDEX_FILE = "$DIST_DIR/index.json"
-$CHANNEL_INDEX_FILE = "$DIST_DIR/channel-$Channel.json"
+$INDEX_FILE = "$DIST_V2_BASEDIR/index.json"
+$CHANNEL_INDEX_FILE = "$DIST_V2_BASEDIR/channel-$Channel.json"
 
 function Clear-WorkingDir {
     if ($Production -and (-not $KeepArtifacts)) {
@@ -62,12 +52,20 @@ function Clear-WorkingDir {
 
 function Get-DeployedIndex {
     Write-Debug 'Getting the latest deployed index ...'
-    if (Test-Path $DIST_DIR) {
-        Remove-Item -Path $DIST_DIR -Recurse -Force
+
+    if ($env:CI) {
+        # CI clone the deployed index using the checkout action
+        return
     }
-    New-Item -ItemType Directory -Path $DIST_DIR -Force | Out-Null
-    Invoke-RestMethod $INDEX_V2_URL -OutFile $INDEX_FILE
-    Invoke-RestMethod $CHANNEL_INDEX_URL -OutFile $CHANNEL_INDEX_FILE
+
+    New-Item -Path $DIST_DIR -ItemType Directory -Force | Out-Null
+    Push-Location $DIST_DIR
+    Remove-Item '.git' -Recurse -Force -ErrorAction SilentlyContinue
+    & git init --quiet
+    & git remote add origin 'https://github.com/chawyehsu/moonbit-binaries'
+    & git fetch --quiet
+    & git reset --hard origin/gh-pages --quiet
+    Pop-Location
 }
 
 function Invoke-SnapLibcore {
@@ -239,7 +237,7 @@ function Invoke-MergeIndex {
         }
 
         Write-Host "INFO: Saving component index '$_.json' ..."
-        $componentIndexPath = "$DIST_DIR/$Channel/$componentToolchainVersion"
+        $componentIndexPath = "$DIST_V2_BASEDIR/$Channel/$componentToolchainVersion"
         New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
         $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
     }

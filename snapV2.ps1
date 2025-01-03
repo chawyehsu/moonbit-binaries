@@ -37,7 +37,7 @@ Set-StrictMode -Version Latest
 
 $DebugPreference = if ((-not $Production) -or $env:CI) { 'Continue' } else { 'SilentlyContinue' }
 $ErrorActionPreference = 'Stop'
-$DateNightly = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
+$Script:DateNightly = '0000-00-00'
 
 $DOWNLOAD_DIR = "$PSScriptRoot/tmp/download"
 $GHA_ARTIFACTS_DIR = "$PSScriptRoot/tmp/gha-artifacts"
@@ -46,6 +46,9 @@ $DIST_V2_BASEDIR = "$DIST_DIR/v2"
 
 $INDEX_FILE = "$DIST_V2_BASEDIR/index.json"
 $CHANNEL_INDEX_FILE = "$DIST_V2_BASEDIR/channel-$Channel.json"
+
+# Remote URLs
+$LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
 
 function Clear-WorkingDir {
     if ($Production -and (-not $KeepArtifacts)) {
@@ -74,12 +77,18 @@ function Get-DeployedIndex {
     Pop-Location
 }
 
-function Invoke-SnapLibcore {
-    $LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
-
+function Get-LibcoreModifiedDate {
     Write-Debug 'Checking last modified date of moonbit libcore ...'
     $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
     Write-Debug "Moonbit libcore remote last modified: $libcoreRemoteLastModified"
+    if ($Channel -eq 'nightly') {
+        $Script:DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
+    }
+    return $libcoreRemoteLastModified
+}
+
+function Invoke-SnapLibcore {
+    $libcoreRemoteLastModified = Get-LibcoreModifiedDate
 
     $channelIndexLastModified = $null
     if (Test-Path $CHANNEL_INDEX_FILE) {
@@ -91,11 +100,6 @@ function Invoke-SnapLibcore {
     if ($channelIndexLastModified -and ($libcoreRemoteLastModified -lt $channelIndexLastModified)) {
         Write-Host "INFO: libcore is up to date. (channel: $Channel)"
         return
-    }
-
-    # Use the last modified date of the libcore pkg as the nightly build date
-    if ($Channel -eq 'nightly') {
-        $DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
     }
 
     Write-Debug 'Downloading moonbit libcore pkg ...'
@@ -116,10 +120,11 @@ function Invoke-SnapLibcore {
     Write-Host "INFO: Found moonbit libcore version: $libcoreActualVersion"
     $componentLibcore = [ordered]@{
         version = $libcoreActualVersion
+        date    = $Script:DateNightly
         name    = 'libcore'
         file    = switch ($Channel) {
             'latest' { "moonbit-core-v$libcoreActualVersion-universal.zip" }
-            'nightly' { "moonbit-core-nightly-$DateNightly-universal.zip" }
+            'nightly' { "moonbit-core-nightly-$($Script:DateNightly).zip" }
         }
         sha256  = $libcorePkgSha256
     }
@@ -146,6 +151,12 @@ function Invoke-SnapToolchain {
         'x86_64-apple-darwin' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-x86_64.tar.gz" }
         'x86_64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-x86_64.tar.gz" }
         'x86_64-pc-windows' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-windows-x86_64.zip" }
+    }
+
+    if ($Channel -eq 'nightly') {
+        # (NOTES): it is expected that the date of libcore is unchanged between jobs
+        Write-Debug 'Getting nightly build date from libcore ...'
+        Get-LibcoreModifiedDate | Out-Null
     }
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
@@ -199,7 +210,7 @@ function Invoke-SnapToolchain {
         Write-Host "INFO: Found moonbit toolchain version: $toolchainActualVersion"
         $toolchainPkgVersionMark = switch ($Channel) {
             'latest' { "v$toolchainActualVersion" }
-            'nightly' { "nightly-$DateNightly" }
+            'nightly' { "nightly-$($Script:DateNightly)" }
         }
 
         $componentToolchain = [ordered]@{
@@ -238,6 +249,10 @@ function Invoke-MergeIndex {
     $componentCoreJson = Get-Content -Path $componentCoreJsonFile | ConvertFrom-Json -AsHashtable
     $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")
 
+    if ($Channel -eq 'nightly') {
+        $Script:DateNightly = $componentCoreJson.date
+    }
+
     # Update channel index
     if (-not (Test-Path $CHANNEL_INDEX_FILE)) {
         $initChannelIndex = [ordered]@{
@@ -259,7 +274,7 @@ function Invoke-MergeIndex {
         'nightly' {
             [ordered]@{
                 version = $componentCoreJson.version
-                date    = $DateNightly
+                date    = $Script:DateNightly
             }
         }
     }
@@ -270,7 +285,7 @@ function Invoke-MergeIndex {
             $r = $_
             switch ($Channel) {
                 'latest' { $r.version -eq $channelIndexNewRelease.version }
-                'nightly' { $r.date -eq $DateNightly }
+                'nightly' { $r.date -eq $Script:DateNightly }
             }
         } | Measure-Object
     ).Count -gt 0
@@ -278,7 +293,7 @@ function Invoke-MergeIndex {
     if ($releaseAlreadyExists) {
         $msg = switch ($Channel) {
             'latest' { "latest: $($channelIndexNewRelease.version)" }
-            'nightly' { "nightly: $DateNightly" }
+            'nightly' { "nightly: $Script:DateNightly" }
         }
 
         Write-Warning "Duplicate release found in channel index. ($msg)"
@@ -324,7 +339,7 @@ function Invoke-MergeIndex {
         Write-Host "INFO: Saving component index '$_.json' ..."
         $componentIndexPath = switch ($Channel) {
             'latest' { "$DIST_V2_BASEDIR/latest/$componentToolchainVersion" }
-            'nightly' { "$DIST_V2_BASEDIR/nightly/$DateNightly" }
+            'nightly' { "$DIST_V2_BASEDIR/nightly/$Script:DateNightly" }
         }
 
         New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
@@ -341,7 +356,7 @@ function Invoke-MergeIndex {
             $shouldInitChannel = $false
             $c.version = $channelIndexNewRelease.version
             if ($Channel -eq 'nightly') {
-                $c.date = $DateNightly
+                $c.date = $Script:DateNightly
             }
         }
     }
@@ -352,7 +367,7 @@ function Invoke-MergeIndex {
             version = $channelIndexNewRelease.version
         }
         if ($Channel -eq 'nightly') {
-            $initChannel.date = $DateNightly
+            $initChannel.date = $Script:DateNightly
         }
 
         $index.channels = @($index.channels; $initChannel)

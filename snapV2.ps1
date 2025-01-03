@@ -24,15 +24,14 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$SnapToolchain,
     [Parameter(Mandatory = $false)]
-    [switch]$KeepArtifacts = $Merge,
-    [Parameter(Mandatory = $false)]
-    [switch]$Force
+    [switch]$KeepArtifacts = $Merge
 )
 
 Set-StrictMode -Version Latest
 
 $DebugPreference = if ((-not $Production) -or $env:CI) { 'Continue' } else { 'SilentlyContinue' }
 $ErrorActionPreference = 'Stop'
+$DateNightly = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
 
 $DOWNLOAD_DIR = "$PSScriptRoot/tmp/download"
 $GHA_ARTIFACTS_DIR = "$PSScriptRoot/tmp/gha-artifacts"
@@ -65,18 +64,23 @@ function Get-DeployedIndex {
     & git remote add origin 'https://github.com/chawyehsu/moonbit-binaries'
     & git fetch --quiet
     & git reset --hard origin/gh-pages --quiet
+    & git clean -fd --quiet
     Pop-Location
 }
 
 function Invoke-SnapLibcore {
     $LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
-    $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
 
     Write-Debug 'Checking last modified date of moonbit libcore ...'
-    $libcoreRemoteLastUpdated = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
-    $indexLastUpdate = [DateTime]::ParseExact($index.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+    $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    if ($libcoreRemoteLastUpdated -lt $indexLastUpdate) {
+    $channelIndexLastModified = $null
+    if (Test-Path $CHANNEL_INDEX_FILE) {
+        $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
+        $channelIndexLastModified = [DateTime]::ParseExact($channelIndex.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+    }
+
+    if ($channelIndexLastModified -and ($libcoreRemoteLastModified -lt $channelIndexLastModified)) {
         Write-Host "INFO: libcore is up to date. (channel: $Channel)"
         return
     }
@@ -86,7 +90,7 @@ function Invoke-SnapLibcore {
     Push-Location $DOWNLOAD_DIR
 
     $filename = "moonbit-core-$Channel.zip"
-    if ($Force -or (-not (Test-Path $filename))) {
+    if (-not ($KeepArtifacts -and (Test-Path $filename))) {
         Invoke-WebRequest -Uri $LIBCORE_URL -OutFile $filename
     }
 
@@ -100,7 +104,10 @@ function Invoke-SnapLibcore {
     $componentLibcore = [ordered]@{
         version = $libcoreActualVersion
         name    = 'libcore'
-        file    = "moonbit-core-v$libcoreActualVersion.zip"
+        file    = switch ($Channel) {
+            'latest' { "moonbit-core-v$libcoreActualVersion.zip" }
+            'nightly' { "moonbit-core-nightly-$DateNightly.zip" }
+        }
         sha256  = $libcorePkgSha256
     }
 
@@ -127,13 +134,17 @@ function Invoke-SnapToolchain {
         'x86_64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-x86_64.tar.gz" }
         'x86_64-pc-windows' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-windows-x86_64.zip" }
     }
-    $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
-    $toolchainRemoteLastUpdated = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
-    $indexLastUpdate = [DateTime]::ParseExact($index.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+    $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
 
-    if ($toolchainRemoteLastUpdated -lt $indexLastUpdate) {
+    $channelIndexLastModified = $null
+    if (Test-Path $CHANNEL_INDEX_FILE) {
+        $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
+        $channelIndexLastModified = [DateTime]::ParseExact($channelIndex.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+    }
+
+    if ($channelIndexLastModified -and ($toolchainRemoteLastModified -lt $channelIndexLastModified)) {
         Write-Host "INFO: moonbit toolchain is up to date. (arch: $Arch, channel: $Channel)"
         return
     }
@@ -148,7 +159,7 @@ function Invoke-SnapToolchain {
         'x86_64-unknown-linux' { "moonbit-$Channel-linux-x64.tar.gz" }
         'x86_64-pc-windows' { "moonbit-$Channel-win-x64.zip" }
     }
-    if ($Force -or (-not (Test-Path $filename))) {
+    if (-not ($KeepArtifacts -and (Test-Path $filename))) {
         Invoke-WebRequest -Uri $TOOLCHAIN_URL -OutFile $filename
     }
 
@@ -171,14 +182,19 @@ function Invoke-SnapToolchain {
         $toolchainPkgSha256 = (Get-FileHash -Path $filename -Algorithm SHA256).Hash.ToLower()
 
         Write-Host "INFO: Found moonbit toolchain version: $toolchainActualVersion"
+        $toolchainPkgVersionMark = switch ($Channel) {
+            'latest' { "v$toolchainActualVersion" }
+            'nightly' { "nightly-$DateNightly" }
+        }
+
         $componentToolchain = [ordered]@{
             version  = $toolchainActualVersion
             name     = 'toolchain'
             file     = switch ($Arch) {
-                'aarch64-apple-darwin' { "moonbit-v$toolchainActualVersion-aarch64-apple-darwin.tar.gz" }
-                'x86_64-apple-darwin' { "moonbit-v$toolchainActualVersion-x86_64-apple-darwin.tar.gz" }
-                'x86_64-unknown-linux' { "moonbit-v$toolchainActualVersion-x86_64-unknown-linux.tar.gz" }
-                'x86_64-pc-windows' { "moonbit-v$toolchainActualVersion-x86_64-pc-windows.zip" }
+                'aarch64-apple-darwin' { "moonbit-$toolchainPkgVersionMark-aarch64-apple-darwin.tar.gz" }
+                'x86_64-apple-darwin' { "moonbit-$toolchainPkgVersionMark-x86_64-apple-darwin.tar.gz" }
+                'x86_64-unknown-linux' { "moonbit-$toolchainPkgVersionMark-x86_64-unknown-linux.tar.gz" }
+                'x86_64-pc-windows' { "moonbit-$toolchainPkgVersionMark-x86_64-pc-windows.zip" }
             }
             'sha256' = $toolchainPkgSha256
         }
@@ -237,16 +253,40 @@ function Invoke-MergeIndex {
         }
 
         Write-Host "INFO: Saving component index '$_.json' ..."
-        $componentIndexPath = "$DIST_V2_BASEDIR/$Channel/$componentToolchainVersion"
+        $componentIndexPath = switch ($Channel) {
+            'latest' { "$DIST_V2_BASEDIR/latest/$componentToolchainVersion" }
+            'nightly' { "$DIST_V2_BASEDIR/nightly/$DateNightly" }
+        }
+
         New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
         $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
     }
 
     $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")
     # Update channel index
+    if (-not (Test-Path $CHANNEL_INDEX_FILE)) {
+        $initChannelIndex = [ordered]@{
+            version      = 2
+            lastModified = $dateUpdated
+            releases     = @()
+        }
+        Write-Debug 'Creating channel index file ...'
+        $initChannelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
+    }
+
     $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
-    $channelIndexNewRelease = [ordered]@{
-        version = $componentCoreJson.version
+    $channelIndexNewRelease = switch ($Channel) {
+        'latest' {
+            [ordered]@{
+                version = $componentCoreJson.version
+            }
+        }
+        'nightly' {
+            [ordered]@{
+                version = $componentCoreJson.version
+                date    = $DateNightly
+            }
+        }
     }
 
     $channelIndex.lastModified = $dateUpdated
@@ -257,11 +297,29 @@ function Invoke-MergeIndex {
     # Update main index
     $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
     $index.lastModified = $dateUpdated
+    $shouldInitChannel = $true
     $index.channels | ForEach-Object {
         if ($_.name -eq $Channel) {
+            $Script:shouldInitChannel = $false
             $_.version = $channelIndexNewRelease.version
+            if ($Channel -eq 'nightly') {
+                $_.date = $DateNightly
+            }
         }
     }
+
+    if ($shouldInitChannel) {
+        $channel = [ordered]@{
+            name    = $Channel
+            version = $channelIndexNewRelease.version
+        }
+        if ($Channel -eq 'nightly') {
+            $channel.date = $DateNightly
+        }
+
+        $index.channels = @($index.channels; $channel)
+    }
+
     Write-Host 'INFO: Saving main index ...'
     $index | ConvertTo-Json -Depth 99 | Set-Content -Path $INDEX_FILE
 }

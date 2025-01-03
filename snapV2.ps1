@@ -78,12 +78,14 @@ function Invoke-SnapLibcore {
     $LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
 
     Write-Debug 'Checking last modified date of moonbit libcore ...'
-    $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
+    $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
+    Write-Debug "Moonbit libcore remote last modified: $libcoreRemoteLastModified"
 
     $channelIndexLastModified = $null
     if (Test-Path $CHANNEL_INDEX_FILE) {
         $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
         $channelIndexLastModified = [DateTime]::ParseExact($channelIndex.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+        Write-Debug "Channel index last modified: $channelIndexLastModified"
     }
 
     if ($channelIndexLastModified -and ($libcoreRemoteLastModified -lt $channelIndexLastModified)) {
@@ -142,12 +144,14 @@ function Invoke-SnapToolchain {
     }
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
-    $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
+    $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')"
+    Write-Debug "Moonbit toolchain remote last modified: $toolchainRemoteLastModified"
 
     $channelIndexLastModified = $null
     if (Test-Path $CHANNEL_INDEX_FILE) {
         $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
         $channelIndexLastModified = [DateTime]::ParseExact($channelIndex.lastModified, "yyyyMMdd'T'HHmmssffff'Z'", $null)
+        Write-Debug "Channel index last modified: $channelIndexLastModified"
     }
 
     if ($channelIndexLastModified -and ($toolchainRemoteLastModified -lt $channelIndexLastModified)) {

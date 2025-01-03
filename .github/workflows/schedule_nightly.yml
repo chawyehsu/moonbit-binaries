@@ -160,7 +160,7 @@ jobs:
           commit_message: update index
           keep_files: true
 
-      # - name: Cleanup
-      #   uses: geekyeggo/delete-artifact@v5
-      #   with:
-      #     name: '*'
+      - name: Cleanup
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: component-*

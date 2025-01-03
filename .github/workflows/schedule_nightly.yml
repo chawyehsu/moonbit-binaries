@@ -21,7 +21,6 @@ on:
 jobs:
   snap:
     name: Invoke Snap
-    if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: true
@@ -110,14 +109,6 @@ jobs:
         shell: pwsh
         run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v7
-      #   with:
-      #     path: ./tmp/dist
-      #     base: gh-pages
-      #     title: "chore: update index"
-      #     commit-message: "chore: update index"
-
       - name: Generate Release Tag
         id: generate_tag
         if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
@@ -138,27 +129,27 @@ jobs:
           Remove-Item -Path ./tmp/gha-artifacts/*.json -Force
           "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      - name: Create Release
+      - name: Create Release (Remote)
         uses: softprops/action-gh-release@v2
-        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+        if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
         with:
+          repository: chawyehsu/moonbit-dist-nightly
+          token: ${{ secrets.NIGHTLY_RELEASE_TOKEN }}
           tag_name: ${{ steps.generate_tag.outputs.TAG }}
           body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
           files: |
             ./tmp/gha-artifacts/*${{ steps.generate_tag.outputs.TAG }}*
 
-      - name: Deploy Index
-        uses: peaceiris/actions-gh-pages@v4
-        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
-        with:
-          external_repository: chawyehsu/moonbit-binaries
-          personal_token: ${{ secrets.PERSONAL_TOKEN }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./tmp/dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: update index
-          keep_files: true
+      # - name: Deploy Index
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./tmp/dist
+      #     user_name: 'github-actions[bot]'
+      #     user_email: 'github-actions[bot]@users.noreply.github.com'
+      #     commit_message: update index
+      #     keep_files: true
 
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5

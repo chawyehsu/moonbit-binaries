@@ -298,12 +298,12 @@ function Invoke-MergeIndex {
     $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
     $index.lastModified = $dateUpdated
     $shouldInitChannel = $true
-    $index.channels | ForEach-Object {
-        if ($_.name -eq $Channel) {
-            $Script:shouldInitChannel = $false
-            $_.version = $channelIndexNewRelease.version
+    foreach ($channel in $index.channels) {
+        if ($channel.name -eq $Channel) {
+            $shouldInitChannel = $false
+            $channel.version = $channelIndexNewRelease.version
             if ($Channel -eq 'nightly') {
-                $_.date = $DateNightly
+                $channel.date = $DateNightly
             }
         }
     }

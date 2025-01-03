@@ -49,7 +49,7 @@ $channelLatest = [ordered]@{
 
 $v2JsonChannelLatestPath = "$workingDir/channel-latest.json"
 $v2JsonChannelLatest = $channelLatest | ConvertTo-Json -Depth 99
-$v2JsonChannelLatest | Set-Content -Path $v2JsonChannelLatestPath
+$v2JsonChannelLatest -replace "`r`n", "`n" | Set-Content -Path $v2JsonChannelLatestPath
 Write-Debug "$($v2JsonChannelLatestPath):`n$v2JsonChannelLatest"
 # endregion
 
@@ -73,7 +73,7 @@ $indexV2 = [ordered]@{
 
 $v2JsonIndexPath = "$workingDir/index.json"
 $v2JsonIndex = $indexV2 | ConvertTo-Json -Depth 99
-$v2JsonIndex | Set-Content -Path $v2JsonIndexPath
+$v2JsonIndex -replace "`r`n", "`n" | Set-Content -Path $v2JsonIndexPath
 Write-Debug "$($v2JsonIndexPath):`n$v2JsonIndex"
 # endregion
 
@@ -124,7 +124,7 @@ $channelLatestReleases | ForEach-Object {
         }
 
         $v2JsonComponents = $components | ConvertTo-Json -Depth 99
-        $v2JsonComponents | Set-Content -Path $v2JsonComponentPath
+        $v2JsonComponents -replace "`r`n", "`n" | Set-Content -Path $v2JsonComponentPath
         Write-Debug "$($v2JsonComponentPath):`n$v2JsonComponents"
     }
 }

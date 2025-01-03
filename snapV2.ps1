@@ -44,9 +44,9 @@ $CHANNEL_INDEX_FILE = "$DIST_V2_BASEDIR/channel-$Channel.json"
 
 function Clear-WorkingDir {
     if ($Production -and (-not $KeepArtifacts)) {
+        Write-Debug 'Clearing working directories ...'
         Remove-Item $DOWNLOAD_DIR -Force -Recurse -ErrorAction SilentlyContinue
         Remove-Item $GHA_ARTIFACTS_DIR -Force -Recurse -ErrorAction SilentlyContinue
-        Remove-Item $DIST_DIR -Force -Recurse -ErrorAction SilentlyContinue
     }
 }
 

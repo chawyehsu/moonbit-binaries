@@ -80,7 +80,7 @@ function Get-DeployedIndex {
 function Get-LibcoreModifiedDate {
     Write-Debug 'Checking last modified date of moonbit libcore ...'
     $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
-    Write-Debug "Moonbit libcore remote last modified: $libcoreRemoteLastModified"
+    Write-Debug "Moonbit libcore remote last modified: $($libcoreRemoteLastModified.ToUniversalTime())"
     if ($Channel -eq 'nightly') {
         $Script:DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
     }
@@ -161,7 +161,7 @@ function Invoke-SnapToolchain {
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
     $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')"
-    Write-Debug "Moonbit toolchain remote last modified: $toolchainRemoteLastModified"
+    Write-Debug "Moonbit toolchain remote last modified: $($toolchainRemoteLastModified.ToUniversalTime())"
 
     $channelIndexLastModified = $null
     if (Test-Path $CHANNEL_INDEX_FILE) {

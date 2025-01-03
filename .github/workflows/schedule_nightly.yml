@@ -131,16 +131,24 @@ jobs:
           Write-Host "Generated tag: $tag"
           "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      - name: Create Release (Remote)
-        uses: softprops/action-gh-release@v2
-        if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
         with:
-          repository: chawyehsu/moonbit-dist-nightly
-          token: ${{ secrets.NIGHTLY_RELEASE_TOKEN }}
-          tag_name: ${{ steps.generate_tag.outputs.TAG }}
-          body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'nightly' }}) was archived."
-          files: |
-            ./tmp/gha-artifacts/*${{ steps.generate_tag.outputs.TAG }}*
+          path: ./tmp/dist
+          base: gh-pages
+          title: "chore: update index"
+          commit-message: "chore: update index"
+
+      # - name: Create Release (Remote)
+      #   uses: softprops/action-gh-release@v2
+      #   if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
+      #   with:
+      #     repository: chawyehsu/moonbit-dist-nightly
+      #     token: ${{ secrets.NIGHTLY_RELEASE_TOKEN }}
+      #     tag_name: ${{ steps.generate_tag.outputs.TAG }}
+      #     body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'nightly' }}) was archived."
+      #     files: |
+      #       ./tmp/gha-artifacts/*${{ steps.generate_tag.outputs.TAG }}*
 
       # - name: Deploy Index
       #   uses: peaceiris/actions-gh-pages@v4

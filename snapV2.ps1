@@ -6,10 +6,16 @@
     Moonbit snap script.
 .DESCRIPTION
     Snap moonbit core and binaries.
+.PARAMETER Channel
+    Channel to snap. Default is latest.
+.PARAMETER Merge
+    Merge component index files and produce the main index.
 .PARAMETER Production
     Production mode. Default is development mode.
 .PARAMETER SnapToolchain
     Snap moonbit toolchain. Default is to snap moonbit core.
+.PARAMETER KeepArtifacts
+    Keep artifacts between runs.
 .LINK
     https://github.com/chawyehsu/moonbit-binaries
 #>
@@ -105,8 +111,8 @@ function Invoke-SnapLibcore {
         version = $libcoreActualVersion
         name    = 'libcore'
         file    = switch ($Channel) {
-            'latest' { "moonbit-core-v$libcoreActualVersion.zip" }
-            'nightly' { "moonbit-core-nightly-$DateNightly.zip" }
+            'latest' { "moonbit-core-v$libcoreActualVersion-universal.zip" }
+            'nightly' { "moonbit-core-nightly-$DateNightly-universal.zip" }
         }
         sha256  = $libcorePkgSha256
     }

@@ -91,8 +91,21 @@ jobs:
           pattern: component-*
           merge-multiple: true
 
+      - name: Validate Artifacts
+        id: validate_artifacts
+        shell: pwsh
+        run: |
+          $artifacts = Get-ChildItem -Path ./tmp/gha-artifacts -File
+          if ($artifacts.Count -eq 0) {
+            Write-Host "No artifacts found."
+            "SHOULD_MERGE=0" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          } else {
+            "SHOULD_MERGE=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          }
+
       - name: Merge Index
         id: merge_index
+        if: ${{ steps.validate_artifacts.outputs.SHOULD_MERGE }}
         shell: pwsh
         run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
@@ -105,7 +118,7 @@ jobs:
       #     commit-message: "chore: update index"
 
       - name: Generate Release Tag
-        id: validate
+        id: generate_tag
         if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
         shell: pwsh
         run: |
@@ -126,16 +139,16 @@ jobs:
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
-        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.validate.outputs.TAG }}
+        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
         with:
-          tag_name: ${{ steps.validate.outputs.TAG }}
-          body: "MoonBit release ${{ steps.validate.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
+          tag_name: ${{ steps.generate_tag.outputs.TAG }}
+          body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
           files: |
-            ./tmp/gha-artifacts/*${{ steps.validate.outputs.TAG }}*
+            ./tmp/gha-artifacts/*${{ steps.generate_tag.outputs.TAG }}*
 
       - name: Deploy Index
         uses: peaceiris/actions-gh-pages@v4
-        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.validate.outputs.TAG }}
+        if: ${{ github.repository == 'chawyehsu/moonbit-dist-nightly' && github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
         with:
           external_repository: chawyehsu/moonbit-binaries
           personal_token: ${{ secrets.PERSONAL_TOKEN }}

@@ -70,7 +70,7 @@ function Get-DeployedIndex {
 
 function Invoke-SnapLibcore {
     $LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
-    [OrderedHashtable]$index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
+    $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
 
     Write-Debug 'Checking last modified date of moonbit libcore ...'
     $libcoreRemoteLastUpdated = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
@@ -127,7 +127,7 @@ function Invoke-SnapToolchain {
         'x86_64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-x86_64.tar.gz" }
         'x86_64-pc-windows' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-windows-x86_64.zip" }
     }
-    [OrderedHashtable]$index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
+    $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
     $toolchainRemoteLastUpdated = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')" -Format FileDateTimeUniversal
@@ -204,7 +204,7 @@ function Invoke-MergeIndex {
         exit 1
     }
 
-    [OrderedHashtable]$componentCoreJson = Get-Content -Path $componentCoreJsonFile | ConvertFrom-Json -AsHashtable
+    $componentCoreJson = Get-Content -Path $componentCoreJsonFile | ConvertFrom-Json -AsHashtable
 
     @(
         'aarch64-apple-darwin'
@@ -218,7 +218,7 @@ function Invoke-MergeIndex {
             exit 1
         }
 
-        [OrderedHashtable]$componentToolchainJson = Get-Content -Path $componentToolchainJsonFile | ConvertFrom-Json -AsHashtable
+        $componentToolchainJson = Get-Content -Path $componentToolchainJsonFile | ConvertFrom-Json -AsHashtable
 
         $componentToolchainVersion = $componentToolchainJson.version
         $componentCoreVersion = $componentCoreJson.version
@@ -244,7 +244,7 @@ function Invoke-MergeIndex {
 
     $dateUpdated = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmssffff'Z'")
     # Update channel index
-    [OrderedHashtable]$channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
+    $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
     $channelIndexNewRelease = [ordered]@{
         version = $componentCoreJson.version
     }
@@ -255,7 +255,7 @@ function Invoke-MergeIndex {
     $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
 
     # Update main index
-    [OrderedHashtable]$index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
+    $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
     $index.lastModified = $dateUpdated
     $index.channels | ForEach-Object {
         if ($_.name -eq $Channel) {

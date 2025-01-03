@@ -95,7 +95,7 @@ function Invoke-SnapLibcore {
 
     # Use the last modified date of the libcore pkg as the nightly build date
     if ($Channel -eq 'nightly') {
-        $DateNightly = $libcoreRemoteLastModified.ToString('yyyy-MM-dd')
+        $DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
     }
 
     Write-Debug 'Downloading moonbit libcore pkg ...'

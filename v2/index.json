@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "lastModified": "20241223T0749170000Z",
+  "channels": [
+    {
+      "name": "latest",
+      "version": "0.1.20241223+62b9a1a85"
+    }
+  ],
+  "targets": [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
+    "x86_64-unknown-linux",
+    "x86_64-pc-windows"
+  ]
+}

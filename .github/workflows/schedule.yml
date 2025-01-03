@@ -92,6 +92,8 @@ jobs:
           path: ./tmp/dist
           base: gh-pages
           title: "chore: update index"
+          commit-message: "chore: update index"
+          signoff: true
           draft: true
 
       # - name: Deploy Index

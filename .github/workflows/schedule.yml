@@ -2,14 +2,9 @@ name: Snap Schedule
 
 on:
   workflow_dispatch:
-    inputs:
-      force:
-        description: Force snap even if up-to-date
-        type: boolean
-        default: false
   push:
     branches:
-      - main
+      - v2
   schedule:
     # run every 4 hours at 10 minutes past the hour
     - cron: '10 */4 * * *'
@@ -19,120 +14,107 @@ jobs:
     name: Invoke Snap
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
-          - { name: core, os: ubuntu-latest, core: true }
-          - { name: linux-x64, os: ubuntu-latest }
-          - { name: win-x64, os: windows-latest }
-          - { name: darwin-arm64, os: macos-latest }
-          - { name: darwin-x64, os: macos-13 }
+          - { arch: universal,            os: ubuntu-latest, is_core: true }
+          - { arch: x86_64-unknown-linux, os: ubuntu-latest                }
+          - { arch: x86_64-pc-windows,    os: windows-latest               }
+          - { arch: aarch64-apple-darwin, os: macos-latest                 }
+          - { arch: x86_64-apple-darwin,  os: macos-13                     }
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Snap Core
-        if: ${{ matrix.core == true }}
+        if: ${{ matrix.is_core == true }}
         shell: pwsh
-        run: ./snap.ps1 -Force:$${{ github.event.inputs.force && 'true' || 'false' }}
+        run: ./snapV2.ps1
+
+      - name: Upload Core
+        if: ${{ matrix.is_core == true }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: component-moonbit-core
+          path: ./tmp/gha-artifacts/*
 
       - name: Snap Toolchain
-        if: ${{ matrix.core != true }}
+        if: ${{ matrix.is_core != true }}
         shell: pwsh
-        run: ./snap.ps1 -SnapToolchain -Force:$${{ github.event.inputs.force && 'true' || 'false' }}
+        run: ./snapV2.ps1 -SnapToolchain
 
-      - name: Upload Index
+      - name: Upload Toolchain
+        if: ${{ matrix.is_core != true }}
         uses: actions/upload-artifact@v4
         with:
-          name: index-${{ matrix.name }}.json
-          path: ./tmp/index-${{ matrix.name }}.json
-
-      - name: Upload Binaries
-        if: ${{ matrix.core == true }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-core.zip
-          path: |
-            ./dist
-            !./dist/index.json
-
-      - name: Upload Binaries
-        if: ${{ matrix.core != true }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.name }}.zip
-          path: |
-            ./dist
-            !./dist/index.json
+          name: component-moonbit-toolchain-${{ matrix.arch }}
+          path: ./tmp/gha-artifacts/*
 
   merge:
     needs: snap
-    name: Update Index
+    name: Deploy Index
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download Index
+      - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./tmp
-          pattern: index-*.json
+          path: ./tmp/gha-artifacts
+          pattern: component-*
           merge-multiple: true
 
       - name: Merge Index
         id: merge_index
         shell: pwsh
-        run: |
-          if (Test-Path ./tmp/index-*.json) {
-            ./snap.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          }
+        run: ./snapV2.ps1 -Merge && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      - name: Deploy Index
-        uses: peaceiris/actions-gh-pages@v4
-        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: deployed
-          keep_files: true
+      # - name: Deploy Index
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./dist
+      #     user_name: 'github-actions[bot]'
+      #     user_email: 'github-actions[bot]@users.noreply.github.com'
+      #     commit_message: deployed
+      #     keep_files: true
 
-      - name: Download Binaries
-        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-        uses: actions/download-artifact@v4
-        with:
-          path: ./dist
-          pattern: dist-*.zip
-          merge-multiple: true
+      # - name: Download Binaries
+      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     path: ./dist
+      #     pattern: dist-*.zip
+      #     merge-multiple: true
 
-      - name: Validate Binaries
-        id: validate
-        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-        shell: pwsh
-        run: |
-          $tag = (Get-Content -Path ./dist/index.json -Raw | ConvertFrom-Json -AsHashtable).'core'.releases[0].version
-          $tagDir = "./dist/$tag"
-          if (Test-Path $tagDir) {
-            "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-          }
+      # - name: Validate Binaries
+      #   id: validate
+      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
+      #   shell: pwsh
+      #   run: |
+      #     $tag = (Get-Content -Path ./dist/index.json -Raw | ConvertFrom-Json -AsHashtable).'core'.releases[0].version
+      #     $tagDir = "./dist/$tag"
+      #     if (Test-Path $tagDir) {
+      #       "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+      #     }
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        if: ${{ steps.validate.outputs.TAG }}
-        with:
-          tag_name: v${{ steps.validate.outputs.TAG }}
-          body: MoonBit release v${{ steps.validate.outputs.TAG }} archived
-          files: |
-            ./dist/${{ steps.validate.outputs.TAG }}/*
-            ./dist/core/moonbit-core-v${{ steps.validate.outputs.TAG }}.zip*
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v2
+      #   if: ${{ steps.validate.outputs.TAG }}
+      #   with:
+      #     tag_name: v${{ steps.validate.outputs.TAG }}
+      #     body: MoonBit release v${{ steps.validate.outputs.TAG }} archived
+      #     files: |
+      #       ./dist/${{ steps.validate.outputs.TAG }}/*
+      #       ./dist/core/moonbit-core-v${{ steps.validate.outputs.TAG }}.zip*
 
-      - name: Cleanup
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: |
-            index-*.json
-            dist-*.zip
+      # - name: Cleanup
+      #   uses: geekyeggo/delete-artifact@v5
+      #   with:
+      #     name: |
+      #       index-*.json
+      #       dist-*.zip

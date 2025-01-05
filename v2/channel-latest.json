@@ -3,208 +3,276 @@
   "lastModified": "20250103T1228001932Z",
   "releases": [
     {
-      "version": "0.1.20240704+647946c28"
+      "version": "0.1.20240704+647946c28",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240705+7fdd4a042"
+      "version": "0.1.20240705+7fdd4a042",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240708+77f402149"
+      "version": "0.1.20240708+77f402149",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240709+b6909a8c7"
+      "version": "0.1.20240709+b6909a8c7",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240710+4c588bfc1"
+      "version": "0.1.20240710+4c588bfc1",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240711+5b8020f6e"
+      "version": "0.1.20240711+5b8020f6e",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240712+c459ff08a"
+      "version": "0.1.20240712+c459ff08a",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240715+7c82b4c13"
+      "version": "0.1.20240715+7c82b4c13",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240716+26483df10"
+      "version": "0.1.20240716+26483df10",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240717+d22c317b1"
+      "version": "0.1.20240717+d22c317b1",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240718+32d3b4fac"
+      "version": "0.1.20240718+32d3b4fac",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240719+7a0c5feac"
+      "version": "0.1.20240719+7a0c5feac",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240722+695ec21e1"
+      "version": "0.1.20240722+695ec21e1",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240723+155a870f3"
+      "version": "0.1.20240723+155a870f3",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240723+bb7107754"
+      "version": "0.1.20240723+bb7107754",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240723+eb42c7528"
+      "version": "0.1.20240723+eb42c7528",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240724+44ca43a46"
+      "version": "0.1.20240724+44ca43a46",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240725+5b2cae33b"
+      "version": "0.1.20240725+5b2cae33b",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240726+2b8cf9896"
+      "version": "0.1.20240726+2b8cf9896",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240729+3efb92d5a"
+      "version": "0.1.20240729+3efb92d5a",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240730+95b619bc2"
+      "version": "0.1.20240730+95b619bc2",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240731+983422341"
+      "version": "0.1.20240731+983422341",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240731+b74e79160"
+      "version": "0.1.20240731+b74e79160",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240801+df82b9877"
+      "version": "0.1.20240801+df82b9877",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240802+b0ab1523a"
+      "version": "0.1.20240802+b0ab1523a",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240805+4075945a4"
+      "version": "0.1.20240805+4075945a4",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240806+533ed16a3"
+      "version": "0.1.20240806+533ed16a3",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240806+e79f017ba"
+      "version": "0.1.20240806+e79f017ba",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240807+41236f720"
+      "version": "0.1.20240807+41236f720",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240809+5c355ddde"
+      "version": "0.1.20240809+5c355ddde",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240812+356f388af"
+      "version": "0.1.20240812+356f388af",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240813+4025fe3de"
+      "version": "0.1.20240813+4025fe3de",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240814+e3d1543be"
+      "version": "0.1.20240814+e3d1543be",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240815+658742237"
+      "version": "0.1.20240815+658742237",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240816+1d96b6ac7"
+      "version": "0.1.20240816+1d96b6ac7",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240819+fecaf8ce0"
+      "version": "0.1.20240819+fecaf8ce0",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240820+85e9a0dc8"
+      "version": "0.1.20240820+85e9a0dc8",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240823+c622a5ab0"
+      "version": "0.1.20240823+c622a5ab0",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240827+848d2bb76"
+      "version": "0.1.20240827+848d2bb76",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240830+ed79b6475"
+      "version": "0.1.20240830+ed79b6475",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240902+47bcb87c9"
+      "version": "0.1.20240902+47bcb87c9",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240910+3af041b9a"
+      "version": "0.1.20240910+3af041b9a",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240914+b541585d3"
+      "version": "0.1.20240914+b541585d3",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240919+cc8272ae1"
+      "version": "0.1.20240919+cc8272ae1",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240920+a1bf2bf0d"
+      "version": "0.1.20240920+a1bf2bf0d",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240923+b0e644057"
+      "version": "0.1.20240923+b0e644057",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240924+358b443a6"
+      "version": "0.1.20240924+358b443a6",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20240927+a718e22cc"
+      "version": "0.1.20240927+a718e22cc",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241008+9bf20bff3"
+      "version": "0.1.20241008+9bf20bff3",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241011+9ea637707"
+      "version": "0.1.20241011+9ea637707",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241014+2956e63cd"
+      "version": "0.1.20241014+2956e63cd",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241017+e8d7befb8"
+      "version": "0.1.20241017+e8d7befb8",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241021+e6d54baa1"
+      "version": "0.1.20241021+e6d54baa1",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241028+9083bb095"
+      "version": "0.1.20241028+9083bb095",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241031+7204facb6"
+      "version": "0.1.20241031+7204facb6",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241104+8ce5d2967"
+      "version": "0.1.20241104+8ce5d2967",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241106+8f17a3fc7"
+      "version": "0.1.20241106+8f17a3fc7",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241111+dc2407357"
+      "version": "0.1.20241111+dc2407357",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241115+351cfb074"
+      "version": "0.1.20241115+351cfb074",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241119+c0bb35f82"
+      "version": "0.1.20241119+c0bb35f82",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241125+34a5d819a"
+      "version": "0.1.20241125+34a5d819a",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241202+8756d160d"
+      "version": "0.1.20241202+8756d160d",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241204+f941da9e9"
+      "version": "0.1.20241204+f941da9e9",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241209+f9fa7f5b2"
+      "version": "0.1.20241209+f9fa7f5b2",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241210+3258bad5b"
+      "version": "0.1.20241210+3258bad5b",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241216+68e710374"
+      "version": "0.1.20241216+68e710374",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241218+f4a066f5f"
+      "version": "0.1.20241218+f4a066f5f",
+      "layoutVersion1": true
     },
     {
-      "version": "0.1.20241223+62b9a1a85"
+      "version": "0.1.20241223+62b9a1a85",
+      "layoutVersion1": true
     },
     {
       "version": "0.1.20241231+ba15a9a4e"

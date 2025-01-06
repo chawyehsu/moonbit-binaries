@@ -124,7 +124,7 @@ function Invoke-SnapLibcore {
         name    = 'libcore'
         file    = switch ($Channel) {
             'latest' { "moonbit-core-v$libcoreActualVersion-universal.zip" }
-            'nightly' { "moonbit-core-nightly-$($Script:DateNightly).zip" }
+            'nightly' { "moonbit-core-nightly-$($Script:DateNightly)-universal.zip" }
         }
         sha256  = $libcorePkgSha256
     }
@@ -284,7 +284,10 @@ function Invoke-MergeIndex {
         $channelIndex.releases | Where-Object {
             $r = $_
             switch ($Channel) {
+                # For latest channel, the (compiler) version is checked.
                 'latest' { $r.version -eq $channelIndexNewRelease.version }
+                # For nightly channel, only the date is checked, since the
+                # (compiler) version may not be unique across different nightly builds.
                 'nightly' { $r.date -eq $Script:DateNightly }
             }
         } | Measure-Object

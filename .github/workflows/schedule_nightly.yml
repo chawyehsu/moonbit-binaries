@@ -15,8 +15,8 @@ on:
     branches:
       - main
   schedule:
-    # run every day at 12:15 UTC
-    - cron: '15 12 * * *'
+    # run every day at 21:15 UTC (05:15 GMT+8)
+    - cron: '15 21 * * *'
 
 jobs:
   snap:

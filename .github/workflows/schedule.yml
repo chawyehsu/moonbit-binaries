@@ -10,14 +10,13 @@ on:
         type: choice
         options:
           - latest
-          - nightly
+          # - nightly
   push:
     branches:
-      - v2
       - main
-  # schedule:
-  #   # run every 4 hours at 10 minutes past the hour
-  #   - cron: '10 */4 * * *'
+  schedule:
+    # run every 8 hours at 10 minutes past the hour, there are 3 runs per day
+    - cron: '10 */8 * * *'
 
 jobs:
   snap:

@@ -11,13 +11,13 @@ on:
         options:
           - latest
           # - nightly
-      strict_match:
-        description: 'Strict match for version number'
-        default: true
+      no_version_consistency_check:
+        description: 'Skip version consistency check'
+        default: false
         type: boolean
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   schedule:
     # run every 8 hours at 10 minutes past the hour, there are 3 runs per day
     - cron: '10 */8 * * *'
@@ -50,7 +50,7 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.is_core == true }}
         shell: pwsh
-        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel || 'latest' }}
+        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel || 'latest' }} -NoVersionConsistencyCheck:$${{ github.event.inputs.no_version_consistency_check || 'false' }}
 
       - name: Upload Core
         if: ${{ matrix.is_core == true }}
@@ -112,7 +112,7 @@ jobs:
         id: merge_index
         if: ${{ steps.validate_artifacts.outputs.SHOULD_MERGE }}
         shell: pwsh
-        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} -StrictMatch:$${{ github.event.inputs.strict_match || 'true' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} -NoVersionConsistencyCheck:$${{ github.event.inputs.no_version_consistency_check || 'false' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Generate Release Tag
         id: generate_tag
@@ -142,7 +142,7 @@ jobs:
           tag_name: ${{ steps.generate_tag.outputs.TAG }}
           body: "MoonBit release ${{ steps.generate_tag.outputs.TAG }} (channel: ${{ github.event.inputs.channel || 'latest' }}) was archived."
           files: |
-            ./tmp/gha-artifacts/*${{ steps.generate_tag.outputs.TAG }}*
+            ./tmp/gha-artifacts/moonbit-*
 
       - name: Deploy Index
         uses: peaceiris/actions-gh-pages@v4

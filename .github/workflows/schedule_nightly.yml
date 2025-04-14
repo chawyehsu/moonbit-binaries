@@ -11,9 +11,9 @@ on:
         options:
           # - latest
           - nightly
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   schedule:
     # run every day at 21:15 UTC (05:15 GMT+8)
     - cron: '15 21 * * *'

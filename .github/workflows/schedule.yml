@@ -11,6 +11,10 @@ on:
         options:
           - latest
           # - nightly
+      strict_match:
+        description: 'Strict match for version number'
+        default: true
+        type: boolean
   push:
     branches:
       - main
@@ -108,7 +112,7 @@ jobs:
         id: merge_index
         if: ${{ steps.validate_artifacts.outputs.SHOULD_MERGE }}
         shell: pwsh
-        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'latest' }} -StrictMatch:$${{ github.event.inputs.strict_match || 'true' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Generate Release Tag
         id: generate_tag

@@ -16,6 +16,9 @@
     Snap moonbit toolchain. Default is to snap moonbit core.
 .PARAMETER KeepArtifacts
     Keep artifacts between runs.
+.PARAMETER StrictMatch
+    Strict match for version number. Default is true.
+    Set to false to allow for version difference between core and toolchain.
 .LINK
     https://github.com/chawyehsu/moonbit-binaries
 #>
@@ -30,7 +33,9 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$SnapToolchain,
     [Parameter(Mandatory = $false)]
-    [switch]$KeepArtifacts = $Merge
+    [switch]$KeepArtifacts = $Merge,
+    [Parameter(Mandatory = $false)]
+    [switch]$StrictMatch = $true
 )
 
 Set-StrictMode -Version Latest
@@ -326,7 +331,7 @@ function Invoke-MergeIndex {
         $componentToolchainVersion = $componentToolchainJson.version
         $componentCoreVersion = $componentCoreJson.version
 
-        if ($componentToolchainVersion -ne $componentCoreVersion) {
+        if ($StrictMatch -and $componentToolchainVersion -ne $componentCoreVersion) {
             Write-Error "Version mismatch between core ($componentCoreVersion) and toolchain ($componentToolchainVersion, arch: $_)"
             exit 1
         }

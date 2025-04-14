@@ -16,9 +16,8 @@
     Snap moonbit toolchain. Default is to snap moonbit core.
 .PARAMETER KeepArtifacts
     Keep artifacts between runs.
-.PARAMETER StrictMatch
-    Strict match for version number. Default is true.
-    Set to false to allow for version difference between core and toolchain.
+.PARAMETER NoVersionConsistencyCheck
+    Ignore version consistency check between core and toolchain. Default is false.
 .LINK
     https://github.com/chawyehsu/moonbit-binaries
 #>
@@ -35,7 +34,7 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$KeepArtifacts = $Merge,
     [Parameter(Mandatory = $false)]
-    [switch]$StrictMatch = $true
+    [switch]$NoVersionConsistencyCheck
 )
 
 Set-StrictMode -Version Latest
@@ -86,9 +85,7 @@ function Get-LibcoreModifiedDate {
     Write-Debug 'Checking last modified date of moonbit libcore ...'
     $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
     Write-Debug "Moonbit libcore remote last modified: $($libcoreRemoteLastModified.ToUniversalTime())"
-    if ($Channel -eq 'nightly') {
-        $Script:DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
-    }
+    $Script:DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
     return $libcoreRemoteLastModified
 }
 
@@ -128,7 +125,14 @@ function Invoke-SnapLibcore {
         date    = $Script:DateNightly
         name    = 'libcore'
         file    = switch ($Channel) {
-            'latest' { "moonbit-core-v$libcoreActualVersion-universal.zip" }
+            'latest' {
+                if ($NoVersionConsistencyCheck) {
+                    Write-Warning 'Version consistency check has been disabled.'
+                    'moonbit-core-universal.zip'
+                } else {
+                    "moonbit-core-v$libcoreActualVersion-universal.zip"
+                }
+            }
             'nightly' { "moonbit-core-nightly-$($Script:DateNightly)-universal.zip" }
         }
         sha256  = $libcorePkgSha256
@@ -245,6 +249,10 @@ function Invoke-SnapToolchain {
 }
 
 function Invoke-MergeIndex {
+    # The unique release version number
+    $releaseVersion = $null
+
+    # Check core component
     $componentCoreJsonFile = "$GHA_ARTIFACTS_DIR/component-moonbit-core.json"
     if (-not (Test-Path $componentCoreJsonFile)) {
         Write-Error 'Missing component-moonbit-core.json'
@@ -256,6 +264,62 @@ function Invoke-MergeIndex {
 
     if ($Channel -eq 'nightly') {
         $Script:DateNightly = $componentCoreJson.date
+    }
+
+    # Write component index
+    @(
+        'aarch64-apple-darwin'
+        'x86_64-apple-darwin'
+        'x86_64-unknown-linux'
+        'x86_64-pc-windows'
+    ) | ForEach-Object {
+        $componentToolchainJsonFile = "$GHA_ARTIFACTS_DIR/component-moonbit-toolchain-$_.json"
+        if (-not (Test-Path $componentToolchainJsonFile)) {
+            Write-Error "Missing component-moonbit-toolchain-$_.json"
+            exit 1
+        }
+
+        $componentToolchainJson = Get-Content -Path $componentToolchainJsonFile | ConvertFrom-Json -AsHashtable
+        $componentToolchainVersion = $componentToolchainJson.version
+        # Set the release version to the version of the first toolchain (aarch-64-apple-darwin)
+        if ($null -eq $releaseVersion) {
+            $releaseVersion = $componentToolchainVersion
+        }
+
+        # Check version consistency across toolchains
+        if (-not $NoVersionConsistencyCheck) {
+            if ($releaseVersion -ne $componentToolchainVersion) {
+                Write-Error "Version mismatch found across toolchains: base ($releaseVersion), toolchain ($componentToolchainVersion, arch: $_)"
+                exit 1
+            }
+        }
+
+        # Check version consistency between core and toolchain
+        if (-not $NoVersionConsistencyCheck) {
+            $componentCoreVersion = $componentCoreJson.version
+
+            if ($componentToolchainVersion -ne $componentCoreVersion) {
+                Write-Error "Version mismatch between core ($componentCoreVersion) and toolchain ($componentToolchainVersion, arch: $_)"
+                exit 1
+            }
+        }
+
+        $componentIndex = [ordered]@{
+            version    = 2
+            components = @(
+                $componentToolchainJson | Select-Object -Property name, file, sha256
+                $componentCoreJson | Select-Object -Property name, file, sha256
+            )
+        }
+
+        Write-Host "INFO: Saving component index '$_.json' ..."
+        $componentIndexPath = switch ($Channel) {
+            'latest' { "$DIST_V2_BASEDIR/latest/$componentToolchainVersion" }
+            'nightly' { "$DIST_V2_BASEDIR/nightly/$Script:DateNightly" }
+        }
+
+        New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
+        $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
     }
 
     # Update channel index
@@ -270,15 +334,20 @@ function Invoke-MergeIndex {
     }
     $channelIndex = Get-Content -Path $CHANNEL_INDEX_FILE | ConvertFrom-Json -AsHashtable
 
+    if (-not $releaseVersion) {
+        Write-Error 'Missing release version number'
+        exit 1
+    }
+
     $channelIndexNewRelease = switch ($Channel) {
         'latest' {
             [ordered]@{
-                version = $componentCoreJson.version
+                version = $releaseVersion
             }
         }
         'nightly' {
             [ordered]@{
-                version = $componentCoreJson.version
+                version = $releaseVersion
                 date    = $Script:DateNightly
             }
         }
@@ -312,47 +381,6 @@ function Invoke-MergeIndex {
     $channelIndex.releases = @($channelIndex.releases; $channelIndexNewRelease)
     Write-Host 'INFO: Saving channel index ...'
     $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
-
-    # Write component index
-    @(
-        'aarch64-apple-darwin'
-        'x86_64-apple-darwin'
-        'x86_64-unknown-linux'
-        'x86_64-pc-windows'
-    ) | ForEach-Object {
-        $componentToolchainJsonFile = "$GHA_ARTIFACTS_DIR/component-moonbit-toolchain-$_.json"
-        if (-not (Test-Path $componentToolchainJsonFile)) {
-            Write-Error "Missing component-moonbit-toolchain-$_.json"
-            exit 1
-        }
-
-        $componentToolchainJson = Get-Content -Path $componentToolchainJsonFile | ConvertFrom-Json -AsHashtable
-
-        $componentToolchainVersion = $componentToolchainJson.version
-        $componentCoreVersion = $componentCoreJson.version
-
-        if ($StrictMatch -and $componentToolchainVersion -ne $componentCoreVersion) {
-            Write-Error "Version mismatch between core ($componentCoreVersion) and toolchain ($componentToolchainVersion, arch: $_)"
-            exit 1
-        }
-
-        $componentIndex = [ordered]@{
-            version    = 2
-            components = @(
-                $componentToolchainJson | Select-Object -Property name, file, sha256
-                $componentCoreJson | Select-Object -Property name, file, sha256
-            )
-        }
-
-        Write-Host "INFO: Saving component index '$_.json' ..."
-        $componentIndexPath = switch ($Channel) {
-            'latest' { "$DIST_V2_BASEDIR/latest/$componentToolchainVersion" }
-            'nightly' { "$DIST_V2_BASEDIR/nightly/$Script:DateNightly" }
-        }
-
-        New-Item -Path $componentIndexPath -ItemType Directory -Force | Out-Null
-        $componentIndex | ConvertTo-Json -Depth 99 | Set-Content -Path "$componentIndexPath/$_.json"
-    }
 
     # Update main index
     $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable

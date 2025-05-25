@@ -16,11 +16,13 @@ param(
     [switch]$Production
 )
 
+Set-StrictMode -Version Latest
+
 $DebugPreference = if ($Production) { 'SilentlyContinue' } else { 'Continue' }
 
 $INDEX_V1_URL = 'https://raw.githubusercontent.com/chawyehsu/moonbit-binaries/gh-pages/index.json'
 
-$workingDir = if ($Production) { "$PSScriptRoot/v2" } else { "$PSScriptRoot/tmp/v2" }
+$workingDir = if ($Production) { "$PSScriptRoot/../v2" } else { "$PSScriptRoot/../tmp/v2" }
 
 # ensure the working directory exists
 if (-not (Test-Path $workingDir)) {

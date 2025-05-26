@@ -23,5 +23,7 @@
     # will be excluded.
     ExcludeRules = @(
         'PSAvoidUsingWriteHost'
+        # https://github.com/PowerShell/PSScriptAnalyzer/issues/1472
+        'PSReviewUnusedParameter'
     )
 }

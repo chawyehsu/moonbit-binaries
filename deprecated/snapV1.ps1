@@ -193,7 +193,7 @@ function Invoke-MergeIndex {
         if (-not (Test-Path $PartialIndexFile)) {
             return
         }
-    
+
         $PartialIndex = Get-Content -Path $PartialIndexFile | ConvertFrom-Json -AsHashtable
 
         if (-not $Index.ContainsKey($_)) {

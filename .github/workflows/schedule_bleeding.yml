@@ -1,4 +1,4 @@
-name: Snap Schedule (Bleeding)
+name: Snap Schedule (bleeding)
 
 on:
   workflow_dispatch:

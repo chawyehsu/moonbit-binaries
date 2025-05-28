@@ -119,7 +119,7 @@ jobs:
         shell: pwsh
         run: |
           $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
-          $channel = $channels | Where-Object { $_.name -eq '${{ github.event.inputs.channel || 'bleeding' }}' } | Select-Object -ExpandProperty version -First 1
+          $channel = $channels | Where-Object { $_.name -eq '${{ github.event.inputs.channel || 'bleeding' }}' } | Select-Object -First 1
           if (-not $channel) {
             Write-Host "ERROR: Channel '${{ github.event.inputs.channel || 'bleeding' }}' not found in index."
             exit 1

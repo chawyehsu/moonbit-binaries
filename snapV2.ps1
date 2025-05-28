@@ -42,6 +42,7 @@ Set-StrictMode -Version Latest
 $DebugPreference = if ((-not $Production) -or $env:CI) { 'Continue' } else { 'SilentlyContinue' }
 $ErrorActionPreference = 'Stop'
 $Script:DateNightly = '0000-00-00'
+$Script:HeadCommit = '00000000'
 
 $DOWNLOAD_DIR = "$PSScriptRoot/tmp/download"
 $GHA_ARTIFACTS_DIR = "$PSScriptRoot/tmp/gha-artifacts"
@@ -82,6 +83,12 @@ function Get-DeployedIndex {
     Pop-Location
 }
 
+function Get-LatestCommitHash {
+    Write-Debug 'Getting latest commit hash from moonbitlang/core repo...'
+    $response = Invoke-RestMethod -Uri 'https://api.github.com/repos/moonbitlang/core/commits/main'
+    return $response.sha
+}
+
 function Get-LibcoreModifiedDate {
     Write-Debug 'Checking last modified date of moonbit libcore ...'
     $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
@@ -94,6 +101,9 @@ function Invoke-SnapLibcore {
     $filename = "moonbit-core-$Channel.zip"
 
     if ($Channel -eq 'bleeding') {
+        $Script:HeadCommit = Get-LatestCommitHash
+        $libcoreActualVersion = "bleeding+$($Script:HeadCommit.Substring(0, 7))"
+
         Write-Debug 'Downloading moonbit libcore pkg (bleeding from repo)...'
         New-Item -Path $DOWNLOAD_DIR -ItemType Directory -Force | Out-Null
         Push-Location $DOWNLOAD_DIR
@@ -143,11 +153,7 @@ function Invoke-SnapLibcore {
     $libcorePkgSha256 = (Get-FileHash -Path $filename -Algorithm SHA256).Hash.ToLower()
 
     $componentLibcore = [ordered]@{
-        version = switch ($Channel) {
-            'bleeding' { 'bleeding' }
-            default { $libcoreActualVersion }
-        }
-        date    = $Script:DateNightly
+        version = $libcoreActualVersion
         name    = 'libcore'
         file    = switch ($Channel) {
             'latest' {
@@ -162,6 +168,14 @@ function Invoke-SnapLibcore {
             'bleeding' { 'moonbit-core-bleeding-universal.zip' }
         }
         sha256  = $libcorePkgSha256
+    }
+
+    if ($Channel -eq 'nightly') {
+        $componentLibcore.date = $Script:DateNightly
+    }
+
+    if ($Channel -eq 'bleeding') {
+        $componentLibcore.commit = $Script:HeadCommit
     }
 
     Write-Debug 'Saving libcore component json file ...'
@@ -293,6 +307,9 @@ function Invoke-MergeIndex {
 
     if ($Channel -eq 'nightly') {
         $Script:DateNightly = $componentCoreJson.date
+    }
+    if ($Channel -eq 'bleeding') {
+        $Script:HeadCommit = $componentCoreJson.commit
     }
 
     # Write component index
@@ -437,6 +454,9 @@ function Invoke-MergeIndex {
             if ($Channel -eq 'nightly') {
                 $c.date = $Script:DateNightly
             }
+            if ($Channel -eq 'bleeding') {
+                $c.core = $Script:HeadCommit
+            }
         }
     }
 
@@ -447,6 +467,9 @@ function Invoke-MergeIndex {
         }
         if ($Channel -eq 'nightly') {
             $initChannel.date = $Script:DateNightly
+        }
+        if ($Channel -eq 'bleeding') {
+            $initChannel.core = $Script:HeadCommit
         }
 
         $index.channels = @($index.channels; $initChannel)

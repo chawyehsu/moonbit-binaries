@@ -113,26 +113,34 @@ jobs:
         shell: pwsh
         run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$${{ github.event.inputs.no_version_consistency_check || 'true' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
-      # - name: Generate Release Tag
-      #   id: generate_tag
-      #   if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
-      #   shell: pwsh
-      #   run: |
-      #     $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
-      #     $tag = 'bleeding'
-      #     # Remove component index json
-      #     Remove-Item -Path ./tmp/gha-artifacts/*.json -Force
-      #     Write-Host "Release tag: $tag"
-      #     "TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+      - name: Generate Release Body
+        id: generate_body
+        if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
+        shell: pwsh
+        run: |
+          $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
+          $channel = $channels.${{ github.event.inputs.channel || 'bleeding' }}
+          if (-not $channel) {
+            Write-Host "ERROR: Channel '${{ github.event.inputs.channel || 'bleeding' }}' not found in index."
+            exit 1
+          }
+          $version = $channel.version
+          $commit = $channel.core
+          Write-Host "Release : $version (core: $commit)"
+          "BLEEDING_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "BLEEDING_COMMIT=$commit" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Create Release
         uses: ncipollo/release-action@v1
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' && steps.generate_body.outputs.BLEEDING_VERSION && steps.generate_body.outputs.BLEEDING_COMMIT }}
         with:
           allowUpdates: true
           prerelease: true
           tag: bleeding
-          body: "MoonBit release bleeding (channel: ${{ github.event.inputs.channel || 'bleeding' }}) was archived."
+          body: |
+            MoonBit release bleeding (channel: ${{ github.event.inputs.channel || 'bleeding' }}) was archived.
+            compiler: ${{ steps.generate_body.outputs.BLEEDING_VERSION }}
+            core: ${{ steps.generate_body.outputs.BLEEDING_COMMIT }}
           artifacts: |
             ./tmp/gha-artifacts/moonbit-*
 

@@ -119,13 +119,17 @@ jobs:
         shell: pwsh
         run: |
           $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
-          $channel = $channels.${{ github.event.inputs.channel || 'bleeding' }}
+          $channel = $channels | Where-Object { $_.name -eq '${{ github.event.inputs.channel || 'bleeding' }}' } | Select-Object -ExpandProperty version -First 1
           if (-not $channel) {
             Write-Host "ERROR: Channel '${{ github.event.inputs.channel || 'bleeding' }}' not found in index."
             exit 1
           }
           $version = $channel.version
           $commit = $channel.core
+          if (-not $version -or -not $commit) {
+            Write-Host "ERROR: Version or commit not found in channel."
+            exit 1
+          }
           Write-Host "Release : $version (core: $commit)"
           "BLEEDING_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "BLEEDING_COMMIT=$commit" | Out-File -FilePath $env:GITHUB_OUTPUT -Append

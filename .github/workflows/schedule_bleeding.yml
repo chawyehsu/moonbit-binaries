@@ -144,7 +144,7 @@ jobs:
           body: |
             MoonBit release bleeding (channel: ${{ github.event.inputs.channel || 'bleeding' }}) was archived.
             compiler: ${{ steps.generate_body.outputs.BLEEDING_VERSION }}
-            core: ${{ steps.generate_body.outputs.BLEEDING_COMMIT }}
+            core: ${{ steps.generate_body.outputs.BLEEDING_COMMIT }} [↗](https://github.com/moonbitlang/core/commit/${{ steps.generate_body.outputs.BLEEDING_COMMIT }})
           artifacts: |
             ./tmp/gha-artifacts/moonbit-*
 

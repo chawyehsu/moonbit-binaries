@@ -130,6 +130,14 @@ jobs:
           "BLEEDING_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
           "BLEEDING_COMMIT=$commit" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
+      # Remove this step when it's ready to deploy bleeding to main index
+      - name: Reset Main Index
+        shell: pwsh
+        run: |
+          Push-Location -Path ./tmp/dist
+          git checkout v2/index.json
+          Pop-Location
+
       - name: Create Release
         uses: ncipollo/release-action@v1
         if: ${{ github.ref == 'refs/heads/main' && steps.generate_body.outputs.BLEEDING_VERSION && steps.generate_body.outputs.BLEEDING_COMMIT }}
@@ -154,7 +162,6 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: update index
           keep_files: true
-          exclude_assets: 'v2/index.json'
 
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5

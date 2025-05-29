@@ -10,10 +10,6 @@ on:
         type: choice
         options:
           - bleeding
-      no_version_consistency_check:
-        description: 'Skip version consistency check'
-        default: true
-        type: boolean
   # push:
   #   branches:
   #     - main
@@ -49,7 +45,7 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.is_core == true }}
         shell: pwsh
-        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$${{ github.event.inputs.no_version_consistency_check || 'true' }}
+        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true
 
       - name: Upload Core
         if: ${{ matrix.is_core == true }}
@@ -111,7 +107,7 @@ jobs:
         id: merge_index
         if: ${{ steps.validate_artifacts.outputs.SHOULD_MERGE }}
         shell: pwsh
-        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$${{ github.event.inputs.no_version_consistency_check || 'true' }} && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Generate Release Body
         id: generate_body
@@ -148,16 +144,16 @@ jobs:
           artifacts: |
             ./tmp/gha-artifacts/moonbit-*
 
-      # - name: Deploy Index
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   if: ${{ github.ref == 'refs/heads/main' && steps.generate_tag.outputs.TAG }}
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./tmp/dist
-      #     user_name: 'github-actions[bot]'
-      #     user_email: 'github-actions[bot]@users.noreply.github.com'
-      #     commit_message: update index
-      #     keep_files: true
+      - name: Deploy Index
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.ref == 'refs/heads/main' && steps.generate_body.outputs.BLEEDING_VERSION }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./tmp/dist
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          commit_message: update index
+          keep_files: true
 
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5

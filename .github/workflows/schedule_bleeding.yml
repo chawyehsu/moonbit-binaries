@@ -154,6 +154,7 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           commit_message: update index
           keep_files: true
+          exclude_assets: 'v2/index.json'
 
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5

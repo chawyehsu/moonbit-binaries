@@ -442,6 +442,12 @@ function Invoke-MergeIndex {
     Write-Host 'INFO: Saving channel index ...'
     $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
 
+    # A temporary workaround for moonup v0.2.x
+    if ($Channel -eq 'bleeding') {
+        Write-Debug 'Skipping main index update for bleeding channel.'
+        return
+    }
+
     # Update main index
     $index = Get-Content -Path $INDEX_FILE | ConvertFrom-Json -AsHashtable
     $index.lastModified = $dateUpdated

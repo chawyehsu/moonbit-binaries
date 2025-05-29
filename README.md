@@ -3,7 +3,8 @@
 > Binaries archiving service for MoonBit programming language.
 
 [![Snap Schedule][ci-badge]][cicd]
-[![Snap Schedule Nighly][ci-badge-nightly]][cicd-nightly]
+[![Snap Schedule Nightly][ci-badge-nightly]][cicd-nightly]
+[![Snap Schedule Bleeding][ci-badge-bleeding]][cicd-bleeding]
 [![license][license-badge]](LICENSE)
 [![downloads][downloads-badge]][releases]
 [![downloads][downloads-badge-nightly]][releases-nightly]
@@ -38,6 +39,8 @@ For the license of the binaries/archives of MoonBit, please refer to its website
 [cicd]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule.yml
 [ci-badge-nightly]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule_nightly.yml/badge.svg
 [cicd-nightly]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule_nightly.yml
+[ci-badge-bleeding]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule_bleeding.yml/badge.svg
+[cicd-bleeding]: https://github.com/chawyehsu/moonbit-binaries/actions/workflows/schedule_bleeding.yml
 [license-badge]: https://img.shields.io/github/license/chawyehsu/moonbit-binaries?label=License
 [releases]: https://github.com/chawyehsu/moonbit-binaries/releases
 [releases-nightly]: https://github.com/chawyehsu/moonbit-dist-nightly/releases

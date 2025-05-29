@@ -17,9 +17,9 @@ on:
   # push:
   #   branches:
   #     - main
-  # schedule:
-  #   # run every 2 hours at 5 minutes past the hour
-  #   - cron: '5 */2 * * *'
+  schedule:
+    # run every 2 hours at 5 minutes past the hour
+    - cron: '5 */2 * * *'
 
 jobs:
   snap:

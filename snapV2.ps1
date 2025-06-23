@@ -254,8 +254,8 @@ function Invoke-SnapToolchain {
     $VersionString = (& ./moonc -v)
     Pop-Location
 
-    if ($VersionString -match 'v([\d.]+)(?:\+([a-f0-9]+))') {
-        $toolchainActualVersion = "$($Matches[1])+$($Matches[2])"
+    if ($VersionString -match 'v(([\d.]+)(?:\+([a-f0-9]+))?)') {
+        $toolchainActualVersion = $Matches[1]
         $toolchainPkgSha256 = (Get-FileHash -Path $filename -Algorithm SHA256).Hash.ToLower()
 
         Write-Host "INFO: Found moonbit toolchain version: $toolchainActualVersion"

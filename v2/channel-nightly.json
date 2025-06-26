@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "lastModified": "20250625T2124534809Z",
+  "lastModified": "20250626T2125053843Z",
   "releases": [
     {
       "version": "0.1.20250102+386ff7096",
@@ -553,6 +553,10 @@
     {
       "version": "0.6.19+bdd77efac",
       "date": "2025-06-25"
+    },
+    {
+      "version": "0.6.19+25dbebac8",
+      "date": "2025-06-26"
     }
   ]
 }

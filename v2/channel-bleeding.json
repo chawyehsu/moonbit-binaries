@@ -1,9 +1,9 @@
 {
   "version": 2,
-  "lastModified": "20250702T0813209117Z",
+  "lastModified": "20250702T1012594285Z",
   "releases": [
     {
-      "version": "0.6.20+d27930f33"
+      "version": "0.6.20+b9ffbb55d"
     }
   ]
 }

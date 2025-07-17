@@ -4,12 +4,12 @@
     {
       "name": "toolchain",
       "file": "moonbit-bleeding-x86_64-pc-windows.zip",
-      "sha256": "25f145be0b2fea7f7aa7552c2b7a68431ae13465c5d0e0a92225391e55e2b48d"
+      "sha256": "08d04118fb985233ff3083816b92c472ace40f7eec7d8093e85e3ca13fc68b68"
     },
     {
       "name": "libcore",
       "file": "moonbit-core-bleeding-universal.zip",
-      "sha256": "6f87351693ca496c2b711e0c747e33aeea18d5473cf2943ab98d76b4cc668bae"
+      "sha256": "d9fd15c3da0f7c2375c8fa71cd96f0324d71fc6485b93760fe5c8c9b307ab43f"
     }
   ]
 }

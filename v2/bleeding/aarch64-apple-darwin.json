@@ -4,12 +4,12 @@
     {
       "name": "toolchain",
       "file": "moonbit-bleeding-aarch64-apple-darwin.tar.gz",
-      "sha256": "7e65386cf3e91b1f8f64bcf8d52e681f86fd4e95c05724d4d8e4e65e25c86642"
+      "sha256": "8cd99e46d9b077acd677e0d885a67378b4f0e4428f17515c0394105e9cb5b211"
     },
     {
       "name": "libcore",
       "file": "moonbit-core-bleeding-universal.zip",
-      "sha256": "8f79e066ee7c76563278af363c029c256d634af1133eee95eb31cf8ba7cc9aba"
+      "sha256": "3621d11b6e62d07d157297f5f98e97ae01f445669fbf0b119a88caa1cecbd169"
     }
   ]
 }

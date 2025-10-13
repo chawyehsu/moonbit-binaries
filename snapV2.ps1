@@ -191,13 +191,12 @@ function Invoke-SnapLibcore {
 function Invoke-SnapToolchain {
     param(
         [Parameter(Mandatory = $true, Position = 0)]
-        [ValidateSet('aarch64-apple-darwin', 'x86_64-apple-darwin', 'x86_64-unknown-linux', 'x86_64-pc-windows')]
+        [ValidateSet('aarch64-apple-darwin', 'x86_64-unknown-linux', 'x86_64-pc-windows')]
         [string]$Arch
     )
 
     $TOOLCHAIN_URL = switch ($Arch) {
         'aarch64-apple-darwin' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-aarch64.tar.gz" }
-        'x86_64-apple-darwin' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-x86_64.tar.gz" }
         'x86_64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-x86_64.tar.gz" }
         'x86_64-pc-windows' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-windows-x86_64.zip" }
     }
@@ -232,7 +231,6 @@ function Invoke-SnapToolchain {
 
     $filename = switch ($Arch) {
         'aarch64-apple-darwin' { "moonbit-$Channel-darwin-arm64.tar.gz" }
-        'x86_64-apple-darwin' { "moonbit-$Channel-darwin-x64.tar.gz" }
         'x86_64-unknown-linux' { "moonbit-$Channel-linux-x64.tar.gz" }
         'x86_64-pc-windows' { "moonbit-$Channel-win-x64.zip" }
     }
@@ -270,7 +268,6 @@ function Invoke-SnapToolchain {
             name     = 'toolchain'
             file     = switch ($Arch) {
                 'aarch64-apple-darwin' { "moonbit-$toolchainGitHubReleaseTag-aarch64-apple-darwin.tar.gz" }
-                'x86_64-apple-darwin' { "moonbit-$toolchainGitHubReleaseTag-x86_64-apple-darwin.tar.gz" }
                 'x86_64-unknown-linux' { "moonbit-$toolchainGitHubReleaseTag-x86_64-unknown-linux.tar.gz" }
                 'x86_64-pc-windows' { "moonbit-$toolchainGitHubReleaseTag-x86_64-pc-windows.zip" }
             }
@@ -315,7 +312,6 @@ function Invoke-MergeIndex {
     # Write component index
     @(
         'aarch64-apple-darwin'
-        'x86_64-apple-darwin'
         'x86_64-unknown-linux'
         'x86_64-pc-windows'
     ) | ForEach-Object {
@@ -502,12 +498,7 @@ if ($Merge) {
     }
 
     if ($IsMacOS) {
-        $arch = (uname -sm)
-        if ($arch -match 'arm64') {
-            Invoke-SnapToolchain -Arch 'aarch64-apple-darwin'
-        } else {
-            Invoke-SnapToolchain -Arch 'x86_64-apple-darwin'
-        }
+        Invoke-SnapToolchain -Arch 'aarch64-apple-darwin'
     }
 } else {
     Invoke-SnapLibcore

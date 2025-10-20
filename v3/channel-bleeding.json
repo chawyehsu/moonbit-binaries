@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "lastModified": "20250922T0240286309Z",
+  "releases": {
+    "version": "0.6.27+f593537ba",
+    "targets": [
+      "aarch64-apple-darwin",
+      "x86_64-apple-darwin",
+      "x86_64-unknown-linux",
+      "x86_64-pc-windows"
+    ]
+  }
+}

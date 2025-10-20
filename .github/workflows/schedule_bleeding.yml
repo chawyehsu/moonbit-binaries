@@ -45,7 +45,7 @@ jobs:
       - name: Snap Core
         if: ${{ matrix.is_core == true }}
         shell: pwsh
-        run: ./snapV2.ps1 -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true
+        run: ./snapV3.ps1 -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true
 
       - name: Upload Core
         if: ${{ matrix.is_core == true }}
@@ -57,7 +57,7 @@ jobs:
       - name: Snap Toolchain
         if: ${{ matrix.is_core != true }}
         shell: pwsh
-        run: ./snapV2.ps1 -SnapToolchain -Channel ${{ github.event.inputs.channel || 'bleeding' }}
+        run: ./snapV3.ps1 -SnapToolchain -Channel ${{ github.event.inputs.channel || 'bleeding' }}
 
       - name: Upload Toolchain
         if: ${{ matrix.is_core != true }}
@@ -107,14 +107,14 @@ jobs:
         id: merge_index
         if: ${{ steps.validate_artifacts.outputs.SHOULD_MERGE }}
         shell: pwsh
-        run: ./snapV2.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        run: ./snapV3.ps1 -Merge -Channel ${{ github.event.inputs.channel || 'bleeding' }} -NoVersionConsistencyCheck:$true && "SHOULD_DEPLOY=1" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
 
       - name: Generate Release Body
         id: generate_body
         if: ${{ steps.merge_index.outputs.SHOULD_DEPLOY }}
         shell: pwsh
         run: |
-          $channels = (Get-Content -Path ./tmp/dist/v2/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
+          $channels = (Get-Content -Path ./tmp/dist/v3/index.json -Raw | ConvertFrom-Json -AsHashtable).channels
           $channel = $channels | Where-Object { $_.name -eq '${{ github.event.inputs.channel || 'bleeding' }}' } | Select-Object -First 1
           if (-not $channel) {
             Write-Host "ERROR: Channel '${{ github.event.inputs.channel || 'bleeding' }}' not found in index."
@@ -135,7 +135,7 @@ jobs:
         shell: pwsh
         run: |
           Push-Location -Path ./tmp/dist
-          git checkout v2/index.json
+          git checkout v3/index.json
           Pop-Location
 
       - name: Create Release

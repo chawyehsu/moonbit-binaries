@@ -82,9 +82,9 @@ $targets = @(
     $v3ChannelIndex = [ordered]@{
         version      = 3
         lastModified = $v2ChannelIndex.lastModified
-        releases     = $v2ChannelIndex.releases | ForEach-Object {
-            $_ | Add-Member -MemberType NoteProperty -Name 'targets' -Value $targets -PassThru
-        }
+        releases     = @($v2ChannelIndex.releases | ForEach-Object {
+                $_ | Add-Member -MemberType NoteProperty -Name 'targets' -Value $targets -PassThru
+            })
     }
 
     $v3ChannelFilePath = "$outputDir/$_"

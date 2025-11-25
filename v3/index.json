@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "lastModified": "20251124T2125553378Z",
+  "lastModified": "20251125T2125105802Z",
   "channels": [
     {
       "name": "latest",
@@ -8,8 +8,8 @@
     },
     {
       "name": "nightly",
-      "version": "0.6.32+45cea50e3",
-      "date": "2025-11-24"
+      "version": "0.6.32+f43faf522",
+      "date": "2025-11-25"
     }
   ]
 }

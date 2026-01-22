@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "lastModified": "20260121T2127141627Z",
+  "lastModified": "20260122T2126223592Z",
   "releases": [
     {
       "version": "0.1.20250102+386ff7096",
@@ -2304,6 +2304,15 @@
     {
       "version": "0.7.2+edc19aa62",
       "date": "2026-01-21",
+      "targets": [
+        "aarch64-apple-darwin",
+        "x86_64-unknown-linux",
+        "x86_64-pc-windows"
+      ]
+    },
+    {
+      "version": "0.7.2+dd61bf83d",
+      "date": "2026-01-22",
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-unknown-linux",

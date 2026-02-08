@@ -5,6 +5,7 @@
     {
       "version": "0.1.20240704+647946c28",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -15,6 +16,7 @@
     {
       "version": "0.1.20240705+7fdd4a042",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -25,6 +27,7 @@
     {
       "version": "0.1.20240708+77f402149",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -35,6 +38,7 @@
     {
       "version": "0.1.20240709+b6909a8c7",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -45,6 +49,7 @@
     {
       "version": "0.1.20240710+4c588bfc1",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -55,6 +60,7 @@
     {
       "version": "0.1.20240711+5b8020f6e",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -65,6 +71,7 @@
     {
       "version": "0.1.20240712+c459ff08a",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -75,6 +82,7 @@
     {
       "version": "0.1.20240715+7c82b4c13",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -85,6 +93,7 @@
     {
       "version": "0.1.20240716+26483df10",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -95,6 +104,7 @@
     {
       "version": "0.1.20240717+d22c317b1",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -105,6 +115,7 @@
     {
       "version": "0.1.20240718+32d3b4fac",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -115,6 +126,7 @@
     {
       "version": "0.1.20240719+7a0c5feac",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -125,6 +137,7 @@
     {
       "version": "0.1.20240722+695ec21e1",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -135,6 +148,7 @@
     {
       "version": "0.1.20240723+155a870f3",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -145,6 +159,7 @@
     {
       "version": "0.1.20240723+bb7107754",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -155,6 +170,7 @@
     {
       "version": "0.1.20240723+eb42c7528",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -165,6 +181,7 @@
     {
       "version": "0.1.20240724+44ca43a46",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -175,6 +192,7 @@
     {
       "version": "0.1.20240725+5b2cae33b",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -185,6 +203,7 @@
     {
       "version": "0.1.20240726+2b8cf9896",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -195,6 +214,7 @@
     {
       "version": "0.1.20240729+3efb92d5a",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -205,6 +225,7 @@
     {
       "version": "0.1.20240730+95b619bc2",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -215,6 +236,7 @@
     {
       "version": "0.1.20240731+983422341",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -225,6 +247,7 @@
     {
       "version": "0.1.20240731+b74e79160",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -235,6 +258,7 @@
     {
       "version": "0.1.20240801+df82b9877",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -245,6 +269,7 @@
     {
       "version": "0.1.20240802+b0ab1523a",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -255,6 +280,7 @@
     {
       "version": "0.1.20240805+4075945a4",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -265,6 +291,7 @@
     {
       "version": "0.1.20240806+533ed16a3",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",
@@ -275,6 +302,7 @@
     {
       "version": "0.1.20240806+e79f017ba",
       "layoutVersion1": true,
+      "bundleSourceDir": true,
       "targets": [
         "aarch64-apple-darwin",
         "x86_64-apple-darwin",

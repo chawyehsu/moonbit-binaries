@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "components": [
+    {
+      "name": "toolchain",
+      "file": "moonbit-nightly-2026-04-27-aarch64-apple-darwin.tar.gz",
+      "sha256": "022d6be8ebcb329d0b0a8db473f511f844414c7896b9217e0bed419175de1eaf"
+    },
+    {
+      "name": "libcore",
+      "file": "moonbit-core-nightly-2026-04-27-universal.zip",
+      "sha256": "78f05b09ae5657d7e4b1ada436fa8489ef80af77aa1621f04c6a361036d49863"
+    }
+  ]
+}

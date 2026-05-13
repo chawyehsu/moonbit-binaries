@@ -191,13 +191,20 @@ function Invoke-SnapLibcore {
 function Invoke-SnapToolchain {
     param(
         [Parameter(Mandatory = $true, Position = 0)]
-        [ValidateSet('aarch64-apple-darwin', 'x86_64-apple-darwin', 'x86_64-unknown-linux', 'x86_64-pc-windows')]
+        [ValidateSet(
+            'aarch64-apple-darwin',
+            'x86_64-apple-darwin',
+            'aarch64-unknown-linux',
+            'x86_64-unknown-linux',
+            'x86_64-pc-windows'
+        )]
         [string]$Arch
     )
 
     $TOOLCHAIN_URL = switch ($Arch) {
         'aarch64-apple-darwin' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-aarch64.tar.gz" }
         'x86_64-apple-darwin' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-x86_64.tar.gz" }
+        'aarch64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-aarch64.tar.gz" }
         'x86_64-unknown-linux' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-x86_64.tar.gz" }
         'x86_64-pc-windows' { "https://cli.moonbitlang.com/binaries/$Channel/moonbit-windows-x86_64.zip" }
     }
@@ -233,6 +240,7 @@ function Invoke-SnapToolchain {
     $filename = switch ($Arch) {
         'aarch64-apple-darwin' { "moonbit-$Channel-darwin-arm64.tar.gz" }
         'x86_64-apple-darwin' { "moonbit-$Channel-darwin-x64.tar.gz" }
+        'aarch64-unknown-linux' { "moonbit-$Channel-linux-aarch64.tar.gz" }
         'x86_64-unknown-linux' { "moonbit-$Channel-linux-x64.tar.gz" }
         'x86_64-pc-windows' { "moonbit-$Channel-win-x64.zip" }
     }
@@ -271,6 +279,7 @@ function Invoke-SnapToolchain {
             file     = switch ($Arch) {
                 'aarch64-apple-darwin' { "moonbit-$toolchainGitHubReleaseTag-aarch64-apple-darwin.tar.gz" }
                 'x86_64-apple-darwin' { "moonbit-$toolchainGitHubReleaseTag-x86_64-apple-darwin.tar.gz" }
+                'aarch64-unknown-linux' { "moonbit-$toolchainGitHubReleaseTag-aarch64-unknown-linux.tar.gz" }
                 'x86_64-unknown-linux' { "moonbit-$toolchainGitHubReleaseTag-x86_64-unknown-linux.tar.gz" }
                 'x86_64-pc-windows' { "moonbit-$toolchainGitHubReleaseTag-x86_64-pc-windows.zip" }
             }
@@ -316,6 +325,7 @@ function Invoke-MergeIndex {
     $currentTargets = @(
         'aarch64-apple-darwin'
         # 'x86_64-apple-darwin'
+        'aarch64-unknown-linux'
         'x86_64-unknown-linux'
         'x86_64-pc-windows'
     )
@@ -509,7 +519,12 @@ if ($Merge) {
     }
 
     if ($IsLinux) {
-        Invoke-SnapToolchain -Arch 'x86_64-unknown-linux'
+        $arch = (uname -sm)
+        if ($arch -match 'aarch64') {
+            Invoke-SnapToolchain -Arch 'aarch64-unknown-linux'
+        } else {
+            Invoke-SnapToolchain -Arch 'x86_64-unknown-linux'
+        }
     }
 
     if ($IsMacOS) {

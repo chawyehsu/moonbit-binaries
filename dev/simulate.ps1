@@ -12,7 +12,7 @@ Set-StrictMode -Version Latest
 $Channel = $Channel
 $GHA_ARTIFACTS_DIR = "$PSScriptRoot/../tmp/gha-artifacts"
 
-$VERSION = '0.6.29+9037370fc'
+$VERSION = '0.9.2+bbe2b338f'
 
 function Get-AllToolchain {
     $tag = switch ($Channel) {
@@ -29,6 +29,11 @@ function Get-AllToolchain {
             arch     = 'aarch64-apple-darwin'
             url      = "https://cli.moonbitlang.com/binaries/$Channel/moonbit-darwin-aarch64.tar.gz"
             filename = "moonbit-$tag-aarch64-apple-darwin.tar.gz"
+        }
+        @{
+            arch     = 'aarch64-unknown-linux'
+            url      = "https://cli.moonbitlang.com/binaries/$Channel/moonbit-linux-aarch64.tar.gz"
+            filename = "moonbit-$tag-aarch64-unknown-linux.tar.gz"
         }
         @{
             arch     = 'x86_64-unknown-linux'

@@ -27,6 +27,7 @@ jobs:
       matrix:
         include:
           - { arch: universal, os: ubuntu-latest, is_core: true }
+          - { arch: aarch64-unknown-linux, os: ubuntu-24.04-arm }
           - { arch: x86_64-unknown-linux, os: ubuntu-latest }
           - { arch: x86_64-pc-windows, os: windows-latest }
           - { arch: aarch64-apple-darwin, os: macos-latest }

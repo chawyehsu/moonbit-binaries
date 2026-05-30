@@ -97,6 +97,36 @@ function Get-LibcoreModifiedDate {
     return $libcoreRemoteLastModified
 }
 
+function Get-LibcoreVersionFromMetadata {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$CoreDir
+    )
+
+    $moonModPath = Join-Path $CoreDir 'moon.mod'
+    if (Test-Path $moonModPath) {
+        Write-Debug 'Reading moonbit libcore version from moon.mod ...'
+        $moonModContent = Get-Content -Path $moonModPath -Raw
+        $versionMatch = [regex]::Match($moonModContent, '(?m)^\s*version\s*=\s*"([^"]+)"\s*$')
+        if ($versionMatch.Success) {
+            return $versionMatch.Groups[1].Value
+        }
+
+        Write-Error "Unable to parse version from '$moonModPath'"
+        exit 1
+    }
+
+    # `moon.mod.json` fallback may be deleted in the future
+    $moonModJsonPath = Join-Path $CoreDir 'moon.mod.json'
+    if (Test-Path $moonModJsonPath) {
+        Write-Debug 'Reading moonbit libcore version from moon.mod.json (fallback) ...'
+        return (Get-Content -Path $moonModJsonPath | ConvertFrom-Json).version
+    }
+
+    Write-Error "Cannot determine libcore version: missing 'moon.mod' and 'moon.mod.json' in $CoreDir"
+    exit 1
+}
+
 function Invoke-SnapLibcore {
     $filename = "moonbit-core-$Channel.zip"
 
@@ -145,7 +175,7 @@ function Invoke-SnapLibcore {
         Write-Debug 'Getting moonbit libcore version number ...'
         Remove-Item -Path "$DOWNLOAD_DIR/core-$Channel" -Recurse -Force -ErrorAction SilentlyContinue
         Expand-Archive -Path $filename -DestinationPath "$DOWNLOAD_DIR/core-$Channel" -Force
-        $libcoreActualVersion = (Get-Content -Path "$DOWNLOAD_DIR/core-$Channel/core/moon.mod.json" | ConvertFrom-Json).version
+        $libcoreActualVersion = Get-LibcoreVersionFromMetadata -CoreDir "$DOWNLOAD_DIR/core-$Channel/core"
 
         Write-Host "INFO: Found moonbit libcore version: $libcoreActualVersion"
     }

@@ -493,7 +493,7 @@ function Invoke-MergeIndex {
         $channelIndex.releases = @($channelIndex.releases; $channelIndexNewRelease)
     }
     Write-Host 'INFO: Saving channel index ...'
-    $channelIndex | ConvertTo-Json -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
+    $channelIndex | ConvertTo-Json -Compress -Depth 99 | Set-Content -Path $CHANNEL_INDEX_FILE
 
     # # A temporary workaround for moonup v0.2.x
     # if ($Channel -eq 'bleeding') {

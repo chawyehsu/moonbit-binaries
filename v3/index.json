@@ -1,10 +1,10 @@
 {
   "version": 3,
-  "lastModified": "20260621T2145589752Z",
+  "lastModified": "20260622T1743311697Z",
   "channels": [
     {
       "name": "latest",
-      "version": "0.10.0+e66899a54"
+      "version": "0.10.1+a46be2066"
     },
     {
       "name": "nightly",

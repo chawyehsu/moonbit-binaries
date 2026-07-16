@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "components": [
+    {
+      "name": "toolchain",
+      "file": "moonbit-nightly-2026-07-16-aarch64-unknown-linux.tar.gz",
+      "sha256": "e11e8e968e5e5f4c82ece46f0bafd3fc2a5a6692723eb3c58df763ddc373f1ae"
+    },
+    {
+      "name": "libcore",
+      "file": "moonbit-core-nightly-2026-07-16-universal.zip",
+      "sha256": "3c72406e8ba8871ae7ab0e26e21173434b3a34dc4e556658003035164a0022eb"
+    }
+  ]
+}

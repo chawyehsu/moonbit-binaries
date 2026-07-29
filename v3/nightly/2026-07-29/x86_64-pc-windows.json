@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "components": [
+    {
+      "name": "toolchain",
+      "file": "moonbit-nightly-2026-07-29-x86_64-pc-windows.zip",
+      "sha256": "d2a2723343db6702701ee5785dd322febd9742325fa8da5acf2390828797b20c"
+    },
+    {
+      "name": "libcore",
+      "file": "moonbit-core-nightly-2026-07-29-universal.zip",
+      "sha256": "29c76f4fa077369aee34517fa30230a9e038bd33f27129a09b003e4c5a605406"
+    }
+  ]
+}

@@ -294,7 +294,7 @@ function Invoke-SnapToolchain {
 
     Write-Debug "Raw version string from moonc: $VersionString"
 
-    if ($VersionString -match 'v(([\d.]+)(?:\+([a-f0-9]+))?)') {
+    if ($VersionString -match 'v((\d+\.\d+\.\d+\.\d+)(?:\+([a-f0-9]+))?)') {
         $toolchainActualVersion = $Matches[1]
         $toolchainPkgSha256 = (Get-FileHash -Path $filename -Algorithm SHA256).Hash.ToLower()
 

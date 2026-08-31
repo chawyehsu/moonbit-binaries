@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "components": [
+    {
+      "name": "toolchain",
+      "file": "moonbit-v0.10.11+6ff76a5f9-aarch64-unknown-linux.tar.gz",
+      "sha256": "16566d99a1f512256e24cc21e9c404279004d80255302b58d94b23f5e5439587"
+    },
+    {
+      "name": "libcore",
+      "file": "moonbit-core-v0.10.11+6ff76a5f9-universal.zip",
+      "sha256": "f8dfefe34cf7b6826e9b9dd62b6141572bb111910f07c29d53fe650f285f77df"
+    }
+  ]
+}

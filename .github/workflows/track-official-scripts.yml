@@ -3,7 +3,12 @@ name: Track Official Scripts
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "15 */8 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/track-official-scripts.yml"
+      - "dev/download-official-scripts.ps1"
 
 permissions:
   contents: write

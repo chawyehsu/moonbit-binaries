@@ -1,0 +1,59 @@
+name: Track Official Scripts
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: official-scripts
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Track official scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Download official scripts
+        shell: pwsh
+        run: ./dev/download-official-scripts.ps1
+
+      - name: Update
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          scripts_dir="$(mktemp -d)"
+          cp references/powershell.ps1 "$scripts_dir/powershell.ps1"
+          cp references/unix.sh "$scripts_dir/unix.sh"
+
+          if git fetch origin official-scripts:refs/remotes/origin/official-scripts; then
+            git switch --create official-scripts --track origin/official-scripts
+          else
+            git switch --orphan official-scripts
+            git rm --cached --ignore-unmatch -r .
+          fi
+
+          git clean -fdx
+          cp "$scripts_dir/powershell.ps1" ./powershell.ps1
+          cp "$scripts_dir/unix.sh" ./unix.sh
+          git add --all
+
+          if git diff --cached --quiet; then
+            echo "Official install scripts are unchanged."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: update official install scripts"
+          git push origin official-scripts

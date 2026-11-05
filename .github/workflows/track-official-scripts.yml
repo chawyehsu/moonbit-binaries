@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: official-scripts
@@ -33,6 +34,7 @@ jobs:
         run: ./dev/download-official-scripts.ps1
 
       - name: Update
+        id: update
         shell: bash
         run: |
           set -euo pipefail
@@ -58,7 +60,45 @@ jobs:
             exit 0
           fi
 
+          diff_stat="$(git diff --cached --stat)"
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: update official install scripts"
           git push origin official-scripts
+
+          {
+            echo "CHANGED=1"
+            echo "COMMIT_SHA=$(git rev-parse HEAD)"
+            echo "DIFF_STAT<<EOF"
+            printf '%s\n' "$diff_stat"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open issue
+        if: ${{ steps.update.outputs.CHANGED }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.update.outputs.COMMIT_SHA }}
+          DIFF_STAT: ${{ steps.update.outputs.DIFF_STAT }}
+          REPO: ${{ github.repository }}
+          SERVER_URL: ${{ github.server_url }}
+          RUN_ID: ${{ github.run_id }}
+        shell: bash
+        run: |
+          body_file="$(mktemp)"
+          {
+            echo "The official install scripts changed upstream. A new commit was pushed to the official-scripts branch."
+            echo
+            echo "- Commit: ${SERVER_URL}/${REPO}/commit/${COMMIT_SHA}"
+            echo "- Workflow run: ${SERVER_URL}/${REPO}/actions/runs/${RUN_ID}"
+            echo
+            echo '```'
+            echo "${DIFF_STAT}"
+            echo '```'
+          } > "$body_file"
+
+          gh issue create \
+            --repo "$REPO" \
+            --title "Official install scripts updated (${COMMIT_SHA:0:7})" \
+            --body-file "$body_file"

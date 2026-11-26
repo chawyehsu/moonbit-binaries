@@ -91,7 +91,7 @@ function Get-LatestCommitHash {
 
 function Get-LibcoreModifiedDate {
     Write-Debug 'Checking last modified date of moonbit libcore ...'
-    $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
+    $libcoreRemoteLastModified = Get-Date "$((Invoke-WebRequest -Verbose:$false -Debug:$false -Method HEAD $LIBCORE_URL).Headers.'Last-Modified')"
     Write-Debug "Moonbit libcore remote last modified: $($libcoreRemoteLastModified.ToUniversalTime())"
     $Script:DateNightly = $libcoreRemoteLastModified.ToUniversalTime().ToString('yyyy-MM-dd')
     return $libcoreRemoteLastModified
@@ -139,7 +139,7 @@ function Invoke-SnapLibcore {
         Push-Location $DOWNLOAD_DIR
 
         if (-not ($KeepArtifacts -and (Test-Path $filename))) {
-            Invoke-WebRequest -Uri $LIBCORE_URL_HEAD -OutFile $filename
+            Invoke-WebRequest -Uri $LIBCORE_URL_HEAD -OutFile $filename -Verbose:$false -Debug:$false
         }
 
         # Repack the core zip to rename the `core-main` directory to `core`
@@ -169,7 +169,7 @@ function Invoke-SnapLibcore {
         Push-Location $DOWNLOAD_DIR
 
         if (-not ($KeepArtifacts -and (Test-Path $filename))) {
-            Invoke-WebRequest -Uri $LIBCORE_URL -OutFile $filename
+            Invoke-WebRequest -Uri $LIBCORE_URL -OutFile $filename -Verbose:$false -Debug:$false
         }
 
         Write-Debug 'Getting moonbit libcore version number ...'
@@ -246,7 +246,7 @@ function Invoke-SnapToolchain {
     }
 
     Write-Debug 'Checking last modified date of moonbit toolchain ...'
-    $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')"
+    $toolchainRemoteLastModified = Get-Date "$((Invoke-WebRequest -Verbose:$false -Debug:$false -Method HEAD $TOOLCHAIN_URL).Headers.'Last-Modified')"
     Write-Debug "Moonbit toolchain remote last modified: $($toolchainRemoteLastModified.ToUniversalTime())"
 
     $channelIndexLastModified = $null
@@ -275,7 +275,7 @@ function Invoke-SnapToolchain {
         'x86_64-pc-windows' { "moonbit-$Channel-win-x64.zip" }
     }
     if (-not ($KeepArtifacts -and (Test-Path $filename))) {
-        Invoke-WebRequest -Uri $TOOLCHAIN_URL -OutFile $filename
+        Invoke-WebRequest -Uri $TOOLCHAIN_URL -OutFile $filename -Verbose:$false -Debug:$false
     }
 
     Write-Debug 'Getting moonbit toolchain version number ...'

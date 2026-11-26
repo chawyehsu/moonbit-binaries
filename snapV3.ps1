@@ -404,15 +404,15 @@ function Invoke-MergeIndex {
             }
         }
 
-        # Check version consistency between core and toolchain
+        # Check version consistency between components: core and toolchain
         if (-not $NoVersionConsistencyCheck) {
             $componentCoreVersion = $componentCoreJson.version
 
-            # For nightly channel, strip the `-nightly` suffix for comparison
-            if ($Channel -eq 'nightly') {
-                Write-Debug 'Stripping -nightly suffix from core version for comparison ...'
-                $componentCoreVersion = $componentCoreVersion -replace '-nightly$', ''
-            }
+            # # For nightly channel, strip the `-nightly` suffix for comparison
+            # if ($Channel -eq 'nightly') {
+            #     Write-Debug 'Stripping -nightly suffix from core version for comparison ...'
+            #     $componentCoreVersion = $componentCoreVersion -replace '-nightly$', ''
+            # }
 
             if ($componentToolchainVersion -ne $componentCoreVersion) {
                 Write-Error "Version mismatch between core ($componentCoreVersion) and toolchain ($componentToolchainVersion, arch: $_)"

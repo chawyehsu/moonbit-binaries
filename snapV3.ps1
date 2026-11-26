@@ -56,6 +56,8 @@ $CHANNEL_INDEX_FILE = "$DIST_INDEX_BASEDIR/channel-$Channel.json"
 $LIBCORE_URL = "https://cli.moonbitlang.com/cores/core-$Channel.zip"
 $LIBCORE_URL_HEAD = 'https://github.com/moonbitlang/core/archive/refs/heads/main.zip'
 
+$VERSION_SEMVER_REGEX = '^v?(?<major>0|[1-9]\d*)\.(?<minor>0|[1-9]\d*)\.(?<patch>0|[1-9]\d*)(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?'
+
 function Clear-WorkingDir {
     if ($Production -and (-not $KeepArtifacts)) {
         Write-Debug 'Clearing working directories ...'
@@ -97,7 +99,7 @@ function Get-LibcoreModifiedDate {
     return $libcoreRemoteLastModified
 }
 
-function Get-LibcoreVersionFromMetadata {
+function Get-LibcoreVersionFromPackage {
     param(
         [Parameter(Mandatory = $true)]
         [string]$CoreDir
@@ -107,9 +109,18 @@ function Get-LibcoreVersionFromMetadata {
     if (Test-Path $moonModPath) {
         Write-Debug 'Reading moonbit libcore version from moon.mod ...'
         $moonModContent = Get-Content -Path $moonModPath -Raw
-        $versionMatch = [regex]::Match($moonModContent, '(?m)^\s*version\s*=\s*"([^"]+)"\s*$')
-        if ($versionMatch.Success) {
-            return $versionMatch.Groups[1].Value
+        $versionLine = [regex]::Match($moonModContent, '(?m)^\s*version\s*=\s*"([^"]+)"\s*$')
+        if ($versionLine.Success) {
+            Write-Debug "Matched libcore version line: $(($versionLine.Value).Trim())"
+            $versionString = $versionLine.Groups[1].Value
+
+            # semver regex check
+            if ($versionString -notmatch $VERSION_SEMVER_REGEX) {
+                Write-Error "Invalid libcore version format: $versionString"
+                exit 1
+            }
+
+            return $versionString
         }
 
         Write-Error "Unable to parse version from '$moonModPath'"
@@ -175,7 +186,7 @@ function Invoke-SnapLibcore {
         Write-Debug 'Getting moonbit libcore version number ...'
         Remove-Item -Path "$DOWNLOAD_DIR/core-$Channel" -Recurse -Force -ErrorAction SilentlyContinue
         Expand-Archive -Path $filename -DestinationPath "$DOWNLOAD_DIR/core-$Channel" -Force
-        $libcoreActualVersion = Get-LibcoreVersionFromMetadata -CoreDir "$DOWNLOAD_DIR/core-$Channel/core"
+        $libcoreActualVersion = Get-LibcoreVersionFromPackage -CoreDir "$DOWNLOAD_DIR/core-$Channel/core"
 
         Write-Host "INFO: Found moonbit libcore version: $libcoreActualVersion"
     }
@@ -294,8 +305,9 @@ function Invoke-SnapToolchain {
 
     Write-Debug "Raw version string from moonc: $VersionString"
 
-    if ($VersionString -match 'v((\d+\.\d+\.\d+)(?:\+([a-f0-9]+))?)') {
-        $toolchainActualVersion = $Matches[1]
+    if ($VersionString -match $VERSION_SEMVER_REGEX) {
+        Write-Debug "Matches: $(($Matches | Out-String).Trim())"
+        $toolchainActualVersion = ($Matches[0]).TrimStart('v')
         $toolchainPkgSha256 = (Get-FileHash -Path $filename -Algorithm SHA256).Hash.ToLower()
 
         Write-Host "INFO: Found moonbit toolchain version: $toolchainActualVersion"
@@ -304,6 +316,14 @@ function Invoke-SnapToolchain {
             'nightly' { "nightly-$($Script:DateNightly)" }
             'bleeding' { 'bleeding' }
         }
+
+        # Our previous archives did not capture the `-nightly` suffix in the
+        # `moonc` version, maybe we should include it as-is in future archives?
+        # if ($Channel -eq 'nightly') {
+        #     Write-Debug "Trimming '-nightly' from toolchain actual version ..."
+        #     $toolchainActualVersion = $toolchainActualVersion.TrimEnd('-nightly')
+        # }
+        # Write-Debug "Final toolchain actual version: $toolchainActualVersion"
 
         $componentToolchain = [ordered]@{
             version  = $toolchainActualVersion
